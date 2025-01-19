@@ -8,11 +8,14 @@ import java.util.List;
 
 @Entity
 @Component
+@Table(name = "pokemon" , uniqueConstraints =
+        {@UniqueConstraint(columnNames = {"name"})})
 public class Pokemon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(nullable = false)
     private String name;
     private Integer baseExperience;
     private Integer height;

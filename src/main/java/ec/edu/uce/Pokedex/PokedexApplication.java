@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -36,11 +37,20 @@ public class PokedexApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//pokemonRepository.deleteAll();
-			pokemonService.fetchAndSavePokemon("10277");
 
-			//:)
-			// evitar que haya duplicidad de datos
+			//pokemonRepository.deleteAll();
+
+		try{
+			for(int i=1; i<=3; i++){
+				pokemonService.fetchAndSavePokemon(i);
+			}
+			System.out.println("Se ha evitado los duplicados");
+		}catch (DataIntegrityViolationException e){
+			e.printStackTrace();
+			System.out.println("EXISTE DUPLICIDAD DE POKEMON");
+		}
+
+
 
 		}
 	}

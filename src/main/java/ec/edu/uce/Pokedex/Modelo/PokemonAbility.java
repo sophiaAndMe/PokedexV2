@@ -3,6 +3,9 @@ package ec.edu.uce.Pokedex.Modelo;
 import jakarta.persistence.*;
 
 @Entity
+//@Table(name = "pokemon_ability" , uniqueConstraints =
+//        {@UniqueConstraint(columnNames = {"abilities"})})
+
 public class PokemonAbility {
 
     @Id
