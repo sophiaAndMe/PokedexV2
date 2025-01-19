@@ -36,12 +36,12 @@ public class PokedexApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		pokemonRepository.deleteAll();
-			pokemonService.fetchAndSavePokemon("100");
+		//pokemonRepository.deleteAll();
+			pokemonService.fetchAndSavePokemon("10277");
 
+			//:)
 			// evitar que haya duplicidad de datos
-			// el lugar
-			// si esta visible tambien
+
 		}
 	}
 

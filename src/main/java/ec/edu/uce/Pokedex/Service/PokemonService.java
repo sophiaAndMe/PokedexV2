@@ -1,11 +1,19 @@
 package ec.edu.uce.Pokedex.Service;
 
+import ec.edu.uce.Pokedex.Modelo.PokemonImagen;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +22,10 @@ public class PokemonService {
 
     private final PokemonRepository pokemonRepository;
 
+    @Autowired
+    Pokemon pokemon;
+
+
 
     public PokemonService(PokemonRepository pokemonRepository) {
         this.pokemonRepository = pokemonRepository;
@@ -21,7 +33,7 @@ public class PokemonService {
 
     // metodo para cargar los datos desde una URL
 
-    public void fetchAndSavePokemon(String pokemonName) {
+    public void fetchAndSavePokemon(String pokemonName) throws IOException {
 
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
@@ -32,7 +44,7 @@ public class PokemonService {
         List<Map<String, Object>> responseArea = restTemplate.getForObject(apiEncounters, List.class);
 
 
-        Pokemon pokemon = new Pokemon();
+        //Pokemon pokemon = new Pokemon();
         pokemon.setName((String) response.get("name"));
         pokemon.setHeight((Integer) response.get("height"));
         pokemon.setWeight((Integer) response.get("weight"));
@@ -69,11 +81,83 @@ public class PokemonService {
                 pokemon.getLocation_area_encounters().add(pokemonLocation);
             }
         }
+        //String apiImagen = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
+
+        Map<String, Object> responsePng = restTemplate.getForObject(apiUrl, Map.class);
+
+        // Itera dentro de documento sprites
+        // mapea las imagenes
+        Map<String, Object> pokemonPng = (Map<String, Object>) responsePng.get("sprites");
+        // obtenga la info necesitada
+
+        PokemonImagen pokemonImagen = new PokemonImagen();
+
+        String pokemonNamePng = (String) pokemonPng.get("back_default");
+        String pokemonNamePng2 = (String) pokemonPng.get("front_default");
+
+        pokemonImagen.setBack_default(pokemonNamePng);
+        pokemonImagen.setFront_default(pokemonNamePng2);
+        pokemonImagen.setPokemon(pokemon);
+
+        pokemon.getSprites().add(pokemonImagen);
+
+        // Directorio donde guardar las imágenes
+        String directory = "src/main/resources/static/images/";
+
+        // Descarga y guarda las imágenes
+        try {
+            if (pokemonNamePng != null) {
+                saveImageFromUrl(pokemonNamePng, directory + pokemonName + "_back.png");
+            }
+            if (pokemonNamePng2 != null) {
+                saveImageFromUrl(pokemonNamePng2, directory + pokemonName + "_front.png");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         pokemonRepository.save(pokemon);
+    }
 
+    // quiero crear un metodo para despues llamarlo en fecth :)
 
+    public void imagenPokemon(String pokemonName) throws IOException {
 
+//        RestTemplate restTemplate = new RestTemplate();
+//        String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
+//
+//        Map<String, Object> responsePng = restTemplate.getForObject(apiUrl, Map.class);
+//
+//        // Itera dentro de documento sprites
+//        // mapea las imagenes
+//        Map<String, Object> pokemonPng = (Map<String, Object>) responsePng.get("sprites");
+//        // obtenga la info necesitada
+//        String pokemonNamePng = (String) pokemonPng.get("back_default");
+//        String pokemonNamePng2 = (String) pokemonPng.get("front_default");
+//
+//        // Directorio donde guardar las imágenes
+//        String directory = "src/main/resources/static/images/";
+//
+//        // Descarga y guarda las imágenes
+//        try {
+//            if (pokemonNamePng != null) {
+//                saveImageFromUrl(pokemonNamePng, directory + pokemonName + "_back.png");
+//            }
+//            if (pokemonNamePng2 != null) {
+//                saveImageFromUrl(pokemonNamePng2, directory + pokemonName + "_front.png");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
 
+    private void saveImageFromUrl (String imageUrl, String destinationPath) throws IOException {
+        URL url = new URL(imageUrl);
+        try (InputStream in = url.openStream()) {
+            Path outputPath = Paths.get(destinationPath);
+            Files.createDirectories(outputPath.getParent()); // Crea los directorios si no existen
+            Files.copy(in, outputPath);
+        }
 
 
     }

@@ -1,11 +1,13 @@
 package ec.edu.uce.Pokedex.Modelo;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Component
 public class Pokemon {
 
     @Id
@@ -26,6 +28,10 @@ public class Pokemon {
     @Column(name = "name")
     @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PokemonLocation> location_area_encounters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PokemonImagen> sprites = new ArrayList<>();
+
    // private List<PokemonMove> moves;
    // private PokemonSprites sprites;
     //private NamedApiResource<PokemonSpecies> species;
@@ -114,5 +120,13 @@ public class Pokemon {
 
     public void setAbilities(List<PokemonAbility> abilities) {
         this.abilities = abilities;
+    }
+
+    public List<PokemonImagen> getSprites() {
+        return sprites;
+    }
+
+    public void setSprites(List<PokemonImagen> sprites) {
+        this.sprites = sprites;
     }
 }
