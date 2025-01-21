@@ -2,21 +2,24 @@ package ec.edu.uce.Pokedex.Modelo;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-//@Table(name = "pokemon_ability" , uniqueConstraints =
-//        {@UniqueConstraint(columnNames = {"abilities"})})
+@Table(name = "pokemon_ability" , uniqueConstraints =
+        {@UniqueConstraint(columnNames = {"name"})})
 
 public class PokemonAbility {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Boolean isHidden;
     private Integer slot;
-    @ManyToOne
-    @JoinColumn(name = "pokemon_id")
-    private Pokemon pokemon;
-    private String abilities;
+    @ManyToMany(mappedBy = "abilities")
+    private List<Pokemon> pokemons = new ArrayList<>();
+    @Column(name = "name")
+    private String name;
 
     public Boolean getIsHidden() {
         return isHidden;
@@ -31,19 +34,19 @@ public class PokemonAbility {
         this.slot = slot;
     }
 
-    public Pokemon getPokemon() {
-        return pokemon;
+    public List<Pokemon> getPokemons() {
+        return pokemons;
     }
 
-    public void setPokemon(Pokemon pokemon) {
-        this.pokemon = pokemon;
+    public void setPokemons(List<Pokemon> pokemons) {
+        this.pokemons = pokemons;
     }
 
-    public String getAbilities() {
-        return abilities;
+    public String getName() {
+        return name;
     }
 
-    public void setAbilities(String abilities) {
-        this.abilities = abilities;
+    public void setName(String abilities) {
+        this.name = abilities;
     }
 }

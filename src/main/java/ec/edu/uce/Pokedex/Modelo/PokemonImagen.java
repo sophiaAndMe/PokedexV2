@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 public class PokemonImagen {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     // se van a guardar las url

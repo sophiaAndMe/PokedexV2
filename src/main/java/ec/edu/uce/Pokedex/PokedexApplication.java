@@ -38,17 +38,17 @@ public class PokedexApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-			//pokemonRepository.deleteAll();
+			pokemonRepository.deleteAll();
 
-		try{
-			for(int i=1; i<=3; i++){
-				pokemonService.fetchAndSavePokemon(i);
-			}
-			System.out.println("Se ha evitado los duplicados");
-		}catch (DataIntegrityViolationException e){
-			e.printStackTrace();
-			System.out.println("EXISTE DUPLICIDAD DE POKEMON");
-		}
+//		try{
+//			for(int i=7; i<=1000; i++){
+//				pokemonService.fetchAndSavePokemon(i);
+//			}
+//			System.out.println("Se ha evitado los duplicados");
+//		}catch (DataIntegrityViolationException e){
+//			e.printStackTrace();
+//			System.out.println("EXISTE DUPLICIDAD DE POKEMON");
+//		}
 
 
 

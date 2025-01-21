@@ -4,9 +4,7 @@ import ec.edu.uce.Pokedex.Modelo.PokemonImagen;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -16,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.server.ExportException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,13 +23,14 @@ import java.util.Optional;
 public class PokemonService {
 
     private final PokemonRepository pokemonRepository;
+    private final pokemonAbilityRepository pokemonAbilityRepository;
 
 
 
 
-
-    public PokemonService(PokemonRepository pokemonRepository) {
+    public PokemonService(PokemonRepository pokemonRepository, pokemonAbilityRepository pokemonAbilityRepository) {
         this.pokemonRepository = pokemonRepository;
+        this.pokemonAbilityRepository = pokemonAbilityRepository;
     }
 
     // metodo para cargar los datos desde una URL
@@ -61,16 +61,29 @@ public class PokemonService {
         // Mapea las habilidades
         List<Map<String, Object>> abilities = (List<Map<String, Object>>) response.get("abilities");
 
+        List<PokemonAbility> pokemonAbilities = new ArrayList<>();
+
         for (Map<String, Object> abilityInfo : abilities) {
+
             Map<String, Object> ability = (Map<String, Object>) abilityInfo.get("ability");
             String abilityName = (String) ability.get("name");
 
-            PokemonAbility pokemonAbility = new PokemonAbility();
-            pokemonAbility.setAbilities(abilityName);
-            pokemonAbility.setPokemon(pokemon);
+            // Verificar si la habilidad ya existe
+            PokemonAbility abilityFinal = pokemonAbilityRepository.findByName(abilityName)
+                    .orElseGet(() -> {
+                        PokemonAbility newAbility = new PokemonAbility();
+                        newAbility.setName(abilityName);
+                        return pokemonAbilityRepository.save(newAbility);
+                    });
+            pokemonAbilities.add(abilityFinal);
 
-            // Agrega la habilidad al Pokémon
-            pokemon.getAbilities().add(pokemonAbility);
+//            PokemonAbility pokemonAbility = new PokemonAbility();
+//            pokemonAbility.setName(abilityName);
+//            // aqui hice un cast de list
+//            pokemonAbility.getPokemons().add(pokemon);
+//
+//            // Agrega la habilidad al Pokémon
+//            pokemon.getAbilities().add(pokemonAbility);
 
             // Itera sobre las áreas de encuentro
             for (Map<String, Object> areaInfo : responseArea) {
@@ -85,7 +98,8 @@ public class PokemonService {
                 pokemon.getLocation_area_encounters().add(pokemonLocation);
             }
         }
-        //String apiImagen = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
+        pokemon.setAbilities(pokemonAbilities);
+
 
         Map<String, Object> responsePng = restTemplate.getForObject(apiUrl, Map.class);
 
@@ -124,6 +138,8 @@ public class PokemonService {
 
     }
 
+
+    /// creo que deberia poner en otra clase y carpeta como de eventos
     private void saveImageFromUrl (String imageUrl, String destinationPath) throws IOException {
         URL url = new URL(imageUrl);
         try (InputStream in = url.openStream()) {
@@ -144,4 +160,24 @@ public class PokemonService {
              return;// evita guardar dulicados
         }
     }
+
+    private void habilidadPokemon(Pokemon pokemon, String abilityName){
+    // Verifica si la habilidad ya existe en la base de datos
+        PokemonAbility ability = pokemonAbilityRepository.findByName(abilityName)
+                .orElseGet(() -> {
+                    // Si no existe, crea una nueva habilidad
+                    PokemonAbility newAbility = new PokemonAbility();
+                    newAbility.setName(abilityName);
+                    return pokemonAbilityRepository.save(newAbility);
+                });
+
+        // Agregar la habilidad al Pokémon si no está ya asociada
+        if (!pokemon.getAbilities().contains(ability)) {
+            pokemon.getAbilities().add(ability);
+        }
+
+    }
+
+
+
 }
