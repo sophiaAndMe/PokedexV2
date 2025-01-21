@@ -2,24 +2,29 @@ package ec.edu.uce.Pokedex.Modelo;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
+@Table(uniqueConstraints =
+        {@UniqueConstraint(columnNames = {"name"})})
 public class PokemonLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "pokemon_id")
-    private Pokemon pokemon;
+    @ManyToMany(mappedBy = "location_area_encounters")
+    private List<Pokemon> pokemons = new ArrayList<>();
 
 
-    public Pokemon getPokemon() {
-        return pokemon;
+
+    public List<Pokemon> getPokemons() {
+        return pokemons;
     }
 
-    public void setPokemon(Pokemon pokemon) {
-        this.pokemon = pokemon;
+    public void setPokemons(List<Pokemon> pokemons) {
+        this.pokemons = pokemons;
     }
 
     public int getId() {

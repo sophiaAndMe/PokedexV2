@@ -19,18 +19,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+/*
+*APLICAR
+*RESPONSABILIDAD
+* UNICA :) (mas legible)
+ */
 @Service
 public class PokemonService {
 
     private final PokemonRepository pokemonRepository;
     private final pokemonAbilityRepository pokemonAbilityRepository;
+    private final pokemonAreaRepository pokemonAreaRepository;
 
 
 
-
-    public PokemonService(PokemonRepository pokemonRepository, pokemonAbilityRepository pokemonAbilityRepository) {
+    public PokemonService(PokemonRepository pokemonRepository,
+                          pokemonAbilityRepository pokemonAbilityRepository,
+                          pokemonAreaRepository pokemonAreaRepository) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonAbilityRepository = pokemonAbilityRepository;
+        this.pokemonAreaRepository = pokemonAreaRepository;
     }
 
     // metodo para cargar los datos desde una URL
@@ -42,6 +51,10 @@ public class PokemonService {
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
         String apiEncounters = "https://pokeapi.co/api/v2/pokemon/" + pokemonName + "/encounters";
+
+        if (apiEncounters == null) {
+            throw new IllegalStateException("No se pudo obtener información del Pokémon desde la API.");
+        }
 
         // Mapea los datos JSON a un objeto
         Map<String, Object> response = restTemplate.getForObject(apiUrl, Map.class);
@@ -61,7 +74,9 @@ public class PokemonService {
         // Mapea las habilidades
         List<Map<String, Object>> abilities = (List<Map<String, Object>>) response.get("abilities");
 
+
         List<PokemonAbility> pokemonAbilities = new ArrayList<>();
+        List<PokemonLocation> pokemonLocations = new ArrayList<>();
 
         for (Map<String, Object> abilityInfo : abilities) {
 
@@ -75,31 +90,37 @@ public class PokemonService {
                         newAbility.setName(abilityName);
                         return pokemonAbilityRepository.save(newAbility);
                     });
+
             pokemonAbilities.add(abilityFinal);
+        }
 
-//            PokemonAbility pokemonAbility = new PokemonAbility();
-//            pokemonAbility.setName(abilityName);
-//            // aqui hice un cast de list
-//            pokemonAbility.getPokemons().add(pokemon);
-//
-//            // Agrega la habilidad al Pokémon
-//            pokemon.getAbilities().add(pokemonAbility);
+        // location
+        /// mapeando desde la URl
 
-            // Itera sobre las áreas de encuentro
-            for (Map<String, Object> areaInfo : responseArea) {
-                Map<String, Object> area = (Map<String, Object>) areaInfo.get("location_area");
-                String areaName = (String) area.get("name");
+        // Itera sobre las áreas de encuentro
+        // donde lo guardo
 
-                PokemonLocation pokemonLocation = new PokemonLocation();
-                pokemonLocation.setName(areaName);
-                pokemonLocation.setPokemon(pokemon);
+        if (responseArea != null) {
+            for (Map<String, Object> locationArea : responseArea) {
+                Map<String, Object> area = (Map<String, Object>) locationArea.get("location_area");
+                if (area != null) {
+                    String areaName = (String) area.get("name");
 
-                // Agrega la ubicación a la lista de ubicaciones del Pokémon
-                pokemon.getLocation_area_encounters().add(pokemonLocation);
+                    // Verifica si el área ya existe
+                    PokemonLocation locationFinal = pokemonAreaRepository.findByName(areaName)
+                            .orElseGet(() -> {
+                                PokemonLocation pokemonLocation = new PokemonLocation();
+                                pokemonLocation.setName(areaName);
+                                return pokemonAreaRepository.save(pokemonLocation);
+                            });
+
+                    pokemonLocations.add(locationFinal);
+                }
             }
         }
-        pokemon.setAbilities(pokemonAbilities);
 
+        pokemon.setAbilities(pokemonAbilities);
+        pokemon.setLocation_area_encounters(pokemonLocations);
 
         Map<String, Object> responsePng = restTemplate.getForObject(apiUrl, Map.class);
 
@@ -136,6 +157,10 @@ public class PokemonService {
 
         pokemonRepository.save(pokemon);
 
+    }
+
+    public void findALLPokemons(){
+        pokemonRepository.findAll();
     }
 
 

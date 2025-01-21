@@ -35,8 +35,12 @@ public class Pokemon {
     //private List<NamedApiResource<PokemonForm>> forms;
    // private List<VersionGameIndex> gameIndices;
    // private List<PokemonHeldItem> heldItems;
-    @Column(name = "name")
-    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany()
+    @JoinTable(
+            name = "pokemon_location_seq",
+            joinColumns = @JoinColumn(name = "pokemon_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
     private List<PokemonLocation> location_area_encounters = new ArrayList<>();
 
     @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)

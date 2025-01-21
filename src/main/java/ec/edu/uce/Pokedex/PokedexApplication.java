@@ -38,10 +38,13 @@ public class PokedexApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-			pokemonRepository.deleteAll();
+			List<Pokemon> listaPokemon = pokemonRepository.findAll();
 
+			for(Pokemon pokemon : listaPokemon) {
+				System.out.println(pokemon.getName());
+			}
 //		try{
-//			for(int i=7; i<=1000; i++){
+//			for(int i=1; i<=10; i++){
 //				pokemonService.fetchAndSavePokemon(i);
 //			}
 //			System.out.println("Se ha evitado los duplicados");
