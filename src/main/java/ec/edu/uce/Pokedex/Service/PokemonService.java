@@ -61,7 +61,7 @@ public class PokemonService {
 
         Pokemon pokemon = new Pokemon();
         pokemon.setName((String) response.get("name"));
-
+        manejoDuplicados((String) response.get("name"));
         pokemon.setHeight((int) response.get("height"));
         pokemon.setWeight((int) response.get("weight"));
         pokemon.setIs_Default((boolean) response.get("is_default"));
