@@ -8,13 +8,14 @@ import java.util.List;
 @Entity
 @Table(name = "pokemon_ability" , uniqueConstraints =
         {@UniqueConstraint(columnNames = {"name"})})
-
 public class PokemonAbility {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Boolean isHidden;
+    //no es necesario solo es pokedex
+    @Transient
     private Integer slot;
     @ManyToMany(mappedBy = "abilities")
     private List<Pokemon> pokemons = new ArrayList<>();

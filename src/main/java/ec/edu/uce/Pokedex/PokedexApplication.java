@@ -40,6 +40,7 @@ public class PokedexApplication implements CommandLineRunner {
 
 			List<Pokemon> listaPokemon = pokemonRepository.findAll();
 
+
 			for(Pokemon pokemon : listaPokemon) {
 				System.out.println(pokemon.getName());
 			}

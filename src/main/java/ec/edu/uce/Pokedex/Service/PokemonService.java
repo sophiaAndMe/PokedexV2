@@ -28,11 +28,10 @@ import java.util.Optional;
 @Service
 public class PokemonService {
 
+    /// es final para mantener la integridad de los POKEMOS
     private final PokemonRepository pokemonRepository;
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
-
-
 
     public PokemonService(PokemonRepository pokemonRepository,
                           pokemonAbilityRepository pokemonAbilityRepository,
@@ -43,12 +42,11 @@ public class PokemonService {
     }
 
     // metodo para cargar los datos desde una URL
-
-
-
     public <T> void fetchAndSavePokemon(T pokemonName) throws IOException {
 
+        // No puede ser nulo
         RestTemplate restTemplate = new RestTemplate();
+
         String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
         String apiEncounters = "https://pokeapi.co/api/v2/pokemon/" + pokemonName + "/encounters";
 
@@ -56,50 +54,42 @@ public class PokemonService {
             throw new IllegalStateException("No se pudo obtener información del Pokémon desde la API.");
         }
 
-        // Mapea los datos JSON a un objeto
+        //------------------------------------
+        // Guarda en una lista todo de la URL
         Map<String, Object> response = restTemplate.getForObject(apiUrl, Map.class);
         List<Map<String, Object>> responseArea = restTemplate.getForObject(apiEncounters, List.class);
 
         Pokemon pokemon = new Pokemon();
         pokemon.setName((String) response.get("name"));
-        manejoDuplicados((String) response.get("name"));
-        pokemon.setHeight((Integer) response.get("height"));
-        pokemon.setWeight((Integer) response.get("weight"));
-        pokemon.setDefault((boolean) response.get("is_default"));
-        // no setea el area
 
-        pokemon.setOrder((Integer) response.get("order_pokemon"));
-        pokemon.setBaseExperience((Integer) response.get("base_experience"));
-
-        // Mapea las habilidades
+        pokemon.setHeight((int) response.get("height"));
+        pokemon.setWeight((int) response.get("weight"));
+        pokemon.setIs_Default((boolean) response.get("is_default"));
+        /// creo que me va a causar problemas con la palabra order
+        pokemon.setOrder((int) response.get("order"));
+        pokemon.setBaseExperience((int) response.get("base_experience"));
+        // Aqui las abilites lo guarda en una Lista
+        // recuerda que MAP funciona con clave valor
         List<Map<String, Object>> abilities = (List<Map<String, Object>>) response.get("abilities");
 
-
+        //------------------------------------
         List<PokemonAbility> pokemonAbilities = new ArrayList<>();
-        List<PokemonLocation> pokemonLocations = new ArrayList<>();
-
+        // recorriendo la lista de abilities
         for (Map<String, Object> abilityInfo : abilities) {
-
             Map<String, Object> ability = (Map<String, Object>) abilityInfo.get("ability");
             String abilityName = (String) ability.get("name");
-
-            // Verificar si la habilidad ya existe
-            PokemonAbility abilityFinal = pokemonAbilityRepository.findByName(abilityName)
-                    .orElseGet(() -> {
-                        PokemonAbility newAbility = new PokemonAbility();
-                        newAbility.setName(abilityName);
-                        return pokemonAbilityRepository.save(newAbility);
-                    });
-
-            pokemonAbilities.add(abilityFinal);
+            ManejoHabilidad(pokemon,abilityName);
         }
 
         // location
+        /*
+         * CREAR UN METODO PARA MANEJO DE AREAS
+         */
         /// mapeando desde la URl
 
         // Itera sobre las áreas de encuentro
         // donde lo guardo
-
+        List<PokemonLocation> pokemonLocations = new ArrayList<>();
         if (responseArea != null) {
             for (Map<String, Object> locationArea : responseArea) {
                 Map<String, Object> area = (Map<String, Object>) locationArea.get("location_area");
@@ -186,7 +176,8 @@ public class PokemonService {
         }
     }
 
-    private void habilidadPokemon(Pokemon pokemon, String abilityName){
+    // deberia hacerlo INTERFAZ
+    private void ManejoHabilidad(Pokemon pokemon, String abilityName){
     // Verifica si la habilidad ya existe en la base de datos
         PokemonAbility ability = pokemonAbilityRepository.findByName(abilityName)
                 .orElseGet(() -> {
