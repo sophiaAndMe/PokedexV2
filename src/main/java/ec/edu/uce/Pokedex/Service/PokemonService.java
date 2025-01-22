@@ -4,6 +4,7 @@ import ec.edu.uce.Pokedex.Modelo.PokemonImagen;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,17 +29,24 @@ import java.util.Optional;
 @Service
 public class PokemonService {
 
+
     /// es final para mantener la integridad de los POKEMOS
     private final PokemonRepository pokemonRepository;
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
+    private  ManagerDuplicate managerDuplicate;
+    private SaveImagen saveImagen;
 
     public PokemonService(PokemonRepository pokemonRepository,
                           pokemonAbilityRepository pokemonAbilityRepository,
-                          pokemonAreaRepository pokemonAreaRepository) {
+                          pokemonAreaRepository pokemonAreaRepository,
+                          ManagerDuplicate managerDuplicate,
+                          SaveImagen saveImagen) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonAbilityRepository = pokemonAbilityRepository;
         this.pokemonAreaRepository = pokemonAreaRepository;
+        this.managerDuplicate = managerDuplicate;
+        this.saveImagen = saveImagen;
     }
 
     // metodo para cargar los datos desde una URL
@@ -47,6 +55,7 @@ public class PokemonService {
         // No puede ser nulo
         RestTemplate restTemplate = new RestTemplate();
 
+        //-------------------------------------
         String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
         String apiEncounters = "https://pokeapi.co/api/v2/pokemon/" + pokemonName + "/encounters";
 
@@ -61,7 +70,7 @@ public class PokemonService {
 
         Pokemon pokemon = new Pokemon();
         pokemon.setName((String) response.get("name"));
-        manejoDuplicados((String) response.get("name"));
+        managerDuplicate.manejoPokemonName(pokemonRepository,(String)response.get("name"));
         pokemon.setHeight((int) response.get("height"));
         pokemon.setWeight((int) response.get("weight"));
         pokemon.setIs_Default((boolean) response.get("is_default"));
@@ -73,52 +82,46 @@ public class PokemonService {
         List<Map<String, Object>> abilities = (List<Map<String, Object>>) response.get("abilities");
 
         //------------------------------------
+
         List<PokemonAbility> pokemonAbilities = new ArrayList<>();
         // recorriendo la lista de abilities
         for (Map<String, Object> abilityInfo : abilities) {
             Map<String, Object> ability = (Map<String, Object>) abilityInfo.get("ability");
-            String abilityName = (String) ability.get("name");
-            ManejoHabilidad(pokemon,abilityName);
-        }
 
+            String abilityName = (String) ability.get("name");
+            managerDuplicate.ManejoHabilidad(pokemonAbilityRepository, pokemon,
+                                            abilityName, pokemonAbilities);
+        }
+        pokemon.setAbilities(pokemonAbilities);
+
+        //------------------------------------
         // location
         /*
          * CREAR UN METODO PARA MANEJO DE AREAS
          */
-        /// mapeando desde la URl
 
+        //--------------------------------
         // Itera sobre las áreas de encuentro
-        // donde lo guardo
+        // donde lo guardo :)
         List<PokemonLocation> pokemonLocations = new ArrayList<>();
         if (responseArea != null) {
             for (Map<String, Object> locationArea : responseArea) {
                 Map<String, Object> area = (Map<String, Object>) locationArea.get("location_area");
                 if (area != null) {
                     String areaName = (String) area.get("name");
-
                     // Verifica si el área ya existe
-                    PokemonLocation locationFinal = pokemonAreaRepository.findByName(areaName)
-                            .orElseGet(() -> {
-                                PokemonLocation pokemonLocation = new PokemonLocation();
-                                pokemonLocation.setName(areaName);
-                                return pokemonAreaRepository.save(pokemonLocation);
-                            });
-
-                    pokemonLocations.add(locationFinal);
+                    managerDuplicate.ManejoAreas(pokemonAreaRepository,
+                            pokemon, areaName, pokemonLocations);
                 }
             }
         }
-
-        pokemon.setAbilities(pokemonAbilities);
         pokemon.setLocation_area_encounters(pokemonLocations);
 
         Map<String, Object> responsePng = restTemplate.getForObject(apiUrl, Map.class);
-
         // Itera dentro de documento sprites
         // mapea las imagenes
         Map<String, Object> pokemonPng = (Map<String, Object>) responsePng.get("sprites");
         // obtenga la info necesitada
-
         PokemonImagen pokemonImagen = new PokemonImagen();
 
         String pokemonNamePng = (String) pokemonPng.get("back_default");
@@ -136,64 +139,16 @@ public class PokemonService {
         // Descarga y guarda las imágenes
         try {
             if (pokemonNamePng != null) {
-                saveImageFromUrl(pokemonNamePng, directory + pokemonName + "_back.png");
+                saveImagen.saveImageFromUrl(pokemonNamePng, directory + pokemonName + "_back.png");
             }
             if (pokemonNamePng2 != null) {
-                saveImageFromUrl(pokemonNamePng2, directory + pokemonName + "_front.png");
+                saveImagen.saveImageFromUrl(pokemonNamePng2, directory + pokemonName + "_front.png");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         pokemonRepository.save(pokemon);
-
     }
-
-    public void findALLPokemons(){
-        pokemonRepository.findAll();
-    }
-
-
-    /// creo que deberia poner en otra clase y carpeta como de eventos
-    private void saveImageFromUrl (String imageUrl, String destinationPath) throws IOException {
-        URL url = new URL(imageUrl);
-        try (InputStream in = url.openStream()) {
-            Path outputPath = Paths.get(destinationPath);
-            Files.createDirectories(outputPath.getParent()); // Crea los directorios si no existen
-            Files.copy(in, outputPath);
-        }catch (ExportException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void manejoDuplicados(String name){
-        //Verifica si existe en la db
-        Optional<Pokemon> existePokemon = pokemonRepository.findByName(name);
-
-        if(existePokemon.isPresent()){
-            System.out.println("Ya existe " + name + " , en la base de datos");
-             return;// evita guardar dulicados
-        }
-    }
-
-    // deberia hacerlo INTERFAZ
-    private void ManejoHabilidad(Pokemon pokemon, String abilityName){
-    // Verifica si la habilidad ya existe en la base de datos
-        PokemonAbility ability = pokemonAbilityRepository.findByName(abilityName)
-                .orElseGet(() -> {
-                    // Si no existe, crea una nueva habilidad
-                    PokemonAbility newAbility = new PokemonAbility();
-                    newAbility.setName(abilityName);
-                    return pokemonAbilityRepository.save(newAbility);
-                });
-
-        // Agregar la habilidad al Pokémon si no está ya asociada
-        if (!pokemon.getAbilities().contains(ability)) {
-            pokemon.getAbilities().add(ability);
-        }
-
-    }
-
-
 
 }

@@ -1,6 +1,7 @@
 package ec.edu.uce.Pokedex;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
+import ec.edu.uce.Pokedex.Service.ManagerDuplicate;
 import ec.edu.uce.Pokedex.Service.PokemonRepository;
 import ec.edu.uce.Pokedex.Service.PokemonService;
 import ec.edu.uce.Pokedex.Vista.PokedexSwingApp;
@@ -38,24 +39,27 @@ public class PokedexApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-			List<Pokemon> listaPokemon = pokemonRepository.findAll();
 
+		/*
+		 * Arreglar la persistencia de las tablas intermedias :) 
+		 */
+		pokemonRepository.deleteAll();
 
-			for(Pokemon pokemon : listaPokemon) {
-				System.out.println(pokemon.getName());
+		try{
+			for(long i=11; i<=13; i++){
+				pokemonService.fetchAndSavePokemon(i);
 			}
-//		try{
-//			for(int i=1; i<=10; i++){
-//				pokemonService.fetchAndSavePokemon(i);
-//			}
-//			System.out.println("Se ha evitado los duplicados");
-//		}catch (DataIntegrityViolationException e){
-//			e.printStackTrace();
-//			System.out.println("EXISTE DUPLICIDAD DE POKEMON");
-//		}
-
-
-
+			System.out.println("Se ha evitado los duplicados");
+		}catch (DataIntegrityViolationException e){
+			e.printStackTrace();
+			System.out.println("EXISTE DUPLICIDAD DE POKEMON");
 		}
+
+//		List<Pokemon> listaPokemon = pokemonRepository.findAll();
+//		for(Pokemon pokemon : listaPokemon) {
+//			System.out.println(pokemon.getName());
+//		}
+//
+	}
 	}
 
