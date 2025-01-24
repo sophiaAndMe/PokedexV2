@@ -4,21 +4,15 @@ import ec.edu.uce.Pokedex.Modelo.PokemonImagen;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
-import org.springframework.beans.factory.annotation.Autowired;
+import ec.edu.uce.Pokedex.Service.complements.ManagerDuplicate;
+import ec.edu.uce.Pokedex.Service.complements.SaveImagen;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /*
@@ -34,20 +28,23 @@ public class PokemonService {
     private final PokemonRepository pokemonRepository;
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
-    private  ManagerDuplicate managerDuplicate;
+    private final Pokemon pokemon;
+    private ManagerDuplicate managerDuplicate;
     private SaveImagen saveImagen;
 
     public PokemonService(PokemonRepository pokemonRepository,
                           pokemonAbilityRepository pokemonAbilityRepository,
                           pokemonAreaRepository pokemonAreaRepository,
                           ManagerDuplicate managerDuplicate,
-                          SaveImagen saveImagen) {
+                          SaveImagen saveImagen, Pokemon pokemon) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonAbilityRepository = pokemonAbilityRepository;
         this.pokemonAreaRepository = pokemonAreaRepository;
         this.managerDuplicate = managerDuplicate;
         this.saveImagen = saveImagen;
+        this.pokemon = pokemon;
     }
+
 
     // metodo para cargar los datos desde una URL
     public <T> void fetchAndSavePokemon(T pokemonName) throws IOException {
@@ -87,22 +84,12 @@ public class PokemonService {
         // recorriendo la lista de abilities
         for (Map<String, Object> abilityInfo : abilities) {
             Map<String, Object> ability = (Map<String, Object>) abilityInfo.get("ability");
-
             String abilityName = (String) ability.get("name");
             managerDuplicate.ManejoHabilidad(pokemonAbilityRepository, pokemon,
                                             abilityName, pokemonAbilities);
         }
         pokemon.setAbilities(pokemonAbilities);
 
-        //------------------------------------
-        // location
-        /*
-         * CREAR UN METODO PARA MANEJO DE AREAS
-         */
-
-        //--------------------------------
-        // Itera sobre las áreas de encuentro
-        // donde lo guardo :)
         List<PokemonLocation> pokemonLocations = new ArrayList<>();
         if (responseArea != null) {
             for (Map<String, Object> locationArea : responseArea) {
@@ -150,5 +137,21 @@ public class PokemonService {
 
         pokemonRepository.save(pokemon);
     }
+
+    // metodo para encontar por id
+    public Pokemon findById(Integer id){
+        // busca tu pokemon en tu repositorio
+        return pokemonRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("No se ha encontrado un pokemon"));
+    }
+
+    // obtener las habilidides de ese pokemon
+    public List<PokemonAbility> findAbilities(Integer id){
+        // buscar en el repositorio
+        return (List<PokemonAbility>) pokemonAbilityRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("No se ha encontrado las abilidades de " + pokemon.getName()));
+
+    }
+
 
 }

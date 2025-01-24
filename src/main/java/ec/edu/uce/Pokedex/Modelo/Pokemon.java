@@ -143,4 +143,20 @@ public class Pokemon {
     public void setSprites(List<PokemonImagen> sprites) {
         this.sprites = sprites;
     }
+
+    @Override
+    public String toString() {
+        return "Pokemon{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", baseExperience=" + baseExperience +
+                ", height=" + height +
+                ", is_Default=" + is_Default +
+                ", order=" + order +
+                ", weight=" + weight +
+                ", abilities=" + abilities +
+                ", location_area_encounters=" + location_area_encounters +
+                ", sprites=" + sprites +
+                '}';
+    }
 }

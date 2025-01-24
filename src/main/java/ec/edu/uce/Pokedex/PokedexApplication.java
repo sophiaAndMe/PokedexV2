@@ -1,34 +1,34 @@
 package ec.edu.uce.Pokedex;
 
-import ec.edu.uce.Pokedex.Modelo.Pokemon;
-import ec.edu.uce.Pokedex.Service.ManagerDuplicate;
 import ec.edu.uce.Pokedex.Service.PokemonRepository;
 import ec.edu.uce.Pokedex.Service.PokemonService;
+import ec.edu.uce.Pokedex.Service.complements.ThreadDataBase;
+import ec.edu.uce.Pokedex.Vista.BuscarID;
 import ec.edu.uce.Pokedex.Vista.PokedexSwingApp;
-import ec.edu.uce.Pokedex.Vista.Ventana;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
 
 @SpringBootApplication
 public class PokedexApplication implements CommandLineRunner {
 
+
+	/// para cargar los pokemos :)
+	@Autowired
+	ThreadDataBase threadDataBase;
+
 	private final PokemonService pokemonService;
 	private final PokemonRepository pokemonRepository;
 
-	public PokedexApplication(PokemonService pokemonService, PokemonRepository pokemonRepository) {
+
+	public PokedexApplication(PokemonService pokemonService,
+							  PokemonRepository pokemonRepository) {
 		this.pokemonService = pokemonService;
 		this.pokemonRepository = pokemonRepository;
+
 	}
 
 	public static void main(String[] args) {
@@ -39,27 +39,25 @@ public class PokedexApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
+		//pokemonRepository.deleteAll();
 
-		/*
-		 * Arreglar la persistencia de las tablas intermedias :) 
-		 */
-		pokemonRepository.deleteAll();
 
-		try{
-			for(long i=11; i<=13; i++){
-				pokemonService.fetchAndSavePokemon(i);
-			}
-			System.out.println("Se ha evitado los duplicados");
-		}catch (DataIntegrityViolationException e){
-			e.printStackTrace();
-			System.out.println("EXISTE DUPLICIDAD DE POKEMON");
-		}
+		 threadDataBase.firstPokemon();
 
-//		List<Pokemon> listaPokemon = pokemonRepository.findAll();
-//		for(Pokemon pokemon : listaPokemon) {
-//			System.out.println(pokemon.getName());
-//		}
+
+
+
+//        String pokemonName = "metapod";
 //
+//		Optional<Pokemon> pokemonOptional = pokemonRepository.findByName(pokemonName);
+//		if(pokemonOptional.isPresent()) {
+//			Pokemon pokemon = pokemonOptional.get();
+//			System.out.println("Se ha encontrado: " + pokemon.getName());
+//		}else{
+//			System.out.println("pokemon no encontrado :( ");
+//		}
+
+
 	}
 	}
 

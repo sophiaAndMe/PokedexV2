@@ -1,15 +1,14 @@
-package ec.edu.uce.Pokedex.Service;
+package ec.edu.uce.Pokedex.Service.complements;
 
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import ec.edu.uce.Pokedex.Service.PokemonRepository;
+import ec.edu.uce.Pokedex.Service.pokemonAbilityRepository;
+import ec.edu.uce.Pokedex.Service.pokemonAreaRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ public class ManagerDuplicate {
 
     /// Manejo de Habilidades
     public void ManejoHabilidad(pokemonAbilityRepository pokemonAbilityRepository,
-                                 Pokemon pokemon, String abilityName, List<PokemonAbility> abilities) {
+                                Pokemon pokemon, String abilityName, List<PokemonAbility> abilities) {
 
 
         // Verifica si la habilidad ya existe en la base de datos
@@ -61,7 +60,7 @@ public class ManagerDuplicate {
         }
     }
 
-    public void manejoPokemonName(PokemonRepository pokemonRepository,String name){
+    public void manejoPokemonName(PokemonRepository pokemonRepository, String name){
         //Verifica si existe en la db
         Optional<Pokemon> existePokemon = pokemonRepository.findByName(name);
         if(existePokemon.isPresent()){
