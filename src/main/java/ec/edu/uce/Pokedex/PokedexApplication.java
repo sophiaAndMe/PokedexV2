@@ -3,13 +3,10 @@ package ec.edu.uce.Pokedex;
 import ec.edu.uce.Pokedex.Service.PokemonRepository;
 import ec.edu.uce.Pokedex.Service.PokemonService;
 import ec.edu.uce.Pokedex.Service.complements.ThreadDataBase;
-import ec.edu.uce.Pokedex.Vista.BuscarID;
-import ec.edu.uce.Pokedex.Vista.PokedexSwingApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 
 
 @SpringBootApplication
@@ -42,9 +39,9 @@ public class PokedexApplication implements CommandLineRunner {
 		//pokemonRepository.deleteAll();
 
 
-		 threadDataBase.firstPokemon();
-
-
+		 	threadDataBase.firstPokemon();
+			threadDataBase.secondPokemon();
+			threadDataBase.thirdPokemon();
 
 
 //        String pokemonName = "metapod";

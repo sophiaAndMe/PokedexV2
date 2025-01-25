@@ -35,7 +35,7 @@ public class Pokemon {
     //private List<NamedApiResource<PokemonForm>> forms;
    // private List<VersionGameIndex> gameIndices;
    // private List<PokemonHeldItem> heldItems;
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "pokemon_location_seq",
             joinColumns = @JoinColumn(name = "pokemon_id"),

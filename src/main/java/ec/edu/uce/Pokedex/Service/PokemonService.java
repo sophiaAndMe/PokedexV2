@@ -6,6 +6,7 @@ import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
 import ec.edu.uce.Pokedex.Service.complements.ManagerDuplicate;
 import ec.edu.uce.Pokedex.Service.complements.SaveImagen;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +29,7 @@ public class PokemonService {
     private final PokemonRepository pokemonRepository;
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
-    private final Pokemon pokemon;
+    private  Pokemon pokemon;
     private ManagerDuplicate managerDuplicate;
     private SaveImagen saveImagen;
 
@@ -47,14 +48,14 @@ public class PokemonService {
 
 
     // metodo para cargar los datos desde una URL
-    public <T> void fetchAndSavePokemon(T pokemonName) throws IOException {
+    public <T> void fetchAndSavePokemon(T pokemonId) throws IOException {
 
         // No puede ser nulo
         RestTemplate restTemplate = new RestTemplate();
 
         //-------------------------------------
-        String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonName;
-        String apiEncounters = "https://pokeapi.co/api/v2/pokemon/" + pokemonName + "/encounters";
+        String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + pokemonId;
+        String apiEncounters = "https://pokeapi.co/api/v2/pokemon/" + pokemonId + "/encounters";
 
         if (apiEncounters == null) {
             throw new IllegalStateException("No se pudo obtener información del Pokémon desde la API.");
@@ -126,10 +127,10 @@ public class PokemonService {
         // Descarga y guarda las imágenes
         try {
             if (pokemonNamePng != null) {
-                saveImagen.saveImageFromUrl(pokemonNamePng, directory + pokemonName + "_back.png");
+                saveImagen.saveImageFromUrl(pokemonNamePng, directory +   pokemon.getName() + "_back.png");
             }
             if (pokemonNamePng2 != null) {
-                saveImagen.saveImageFromUrl(pokemonNamePng2, directory + pokemonName + "_front.png");
+                saveImagen.saveImageFromUrl(pokemonNamePng2, directory + pokemon.getName() + "_front.png");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,19 +139,19 @@ public class PokemonService {
         pokemonRepository.save(pokemon);
     }
 
-    // metodo para encontar por id
-    public Pokemon findById(Integer id){
-        // busca tu pokemon en tu repositorio
-        return pokemonRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("No se ha encontrado un pokemon"));
-    }
-
     // obtener las habilidides de ese pokemon
     public List<PokemonAbility> findAbilities(Integer id){
         // buscar en el repositorio
         return (List<PokemonAbility>) pokemonAbilityRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("No se ha encontrado las abilidades de " + pokemon.getName()));
+    }
 
+    // Obtener las areas
+    public List<PokemonLocation> getPokemonLocations(int id){
+
+            pokemon = pokemonRepository.findById(id);
+        Hibernate.initialize(pokemon.getLocation_area_encounters());
+        return pokemon.getLocation_area_encounters();
     }
 
 

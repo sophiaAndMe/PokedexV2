@@ -24,7 +24,7 @@ public class ThreadDataBase {
             System.out.println("Ejecutando los primero 166 pokemons...");
             try {
                 Thread.sleep(1000);
-                for(int i=1;i<=30 ;i++){
+                for(int i=1;i<=300 ;i++){
                     pokemonService.fetchAndSavePokemon(i);
                 }
                 System.out.println("Tarea Completada");
@@ -46,7 +46,7 @@ public class ThreadDataBase {
             try {
 
                 Thread.sleep(5000);
-                for(int i=31;i<=60 ;i++){
+                for(int i=301;i<=601 ;i++){
                     pokemonService.fetchAndSavePokemon(i);
                 }
                 System.out.println("tarea 2 completada!");
@@ -65,8 +65,8 @@ public class ThreadDataBase {
 
             System.out.println("Ejecutando los 333-449 pokemons...");
             try {
-                Thread.sleep(9000);
-                for(int i=333;i<=499 ;i++){
+                Thread.sleep(0);
+                for(int i=602;i<=903 ;i++){
                     pokemonService.fetchAndSavePokemon(i);
                 }
                 System.out.println("tarea 3 completada!");
