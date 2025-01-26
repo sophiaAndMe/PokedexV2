@@ -1,9 +1,6 @@
 package ec.edu.uce.Pokedex.Service;
 
-import ec.edu.uce.Pokedex.Modelo.PokemonImagen;
-import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
-import ec.edu.uce.Pokedex.Modelo.Pokemon;
-import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
+import ec.edu.uce.Pokedex.Modelo.*;
 import ec.edu.uce.Pokedex.Service.complements.ManagerDuplicate;
 import ec.edu.uce.Pokedex.Service.complements.SaveImagen;
 import org.hibernate.Hibernate;
@@ -30,20 +27,26 @@ public class PokemonService {
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
     private  Pokemon pokemon;
+    private  PokemonUsuario pokemonUsuario;
+    private final pokemonUserRepository pokemonUserRepository;
     private ManagerDuplicate managerDuplicate;
     private SaveImagen saveImagen;
 
     public PokemonService(PokemonRepository pokemonRepository,
                           pokemonAbilityRepository pokemonAbilityRepository,
                           pokemonAreaRepository pokemonAreaRepository,
+                          pokemonUserRepository pokemonUserRepository,
                           ManagerDuplicate managerDuplicate,
-                          SaveImagen saveImagen, Pokemon pokemon) {
+                          SaveImagen saveImagen, Pokemon pokemon,
+                          PokemonUsuario pokemonUsuario) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonAbilityRepository = pokemonAbilityRepository;
         this.pokemonAreaRepository = pokemonAreaRepository;
         this.managerDuplicate = managerDuplicate;
         this.saveImagen = saveImagen;
         this.pokemon = pokemon;
+        this.pokemonUserRepository = pokemonUserRepository;
+        this.pokemonUsuario = pokemonUsuario;
     }
 
 
@@ -139,11 +142,18 @@ public class PokemonService {
         pokemonRepository.save(pokemon);
     }
 
+    public void saveUser(String name, String genero){
+    pokemonUsuario.setName(name);
+    pokemonUsuario.setGenero(genero);
+    pokemonUserRepository.save(pokemonUsuario);
+
+    }
+
     // obtener las habilidides de ese pokemon
-    public List<PokemonAbility> findAbilities(Integer id){
-        // buscar en el repositorio
-        return (List<PokemonAbility>) pokemonAbilityRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("No se ha encontrado las abilidades de " + pokemon.getName()));
+    public List<PokemonAbility> findAbilities(int id){
+        pokemon = pokemonRepository.findById(id);
+        Hibernate.initialize(pokemon.getAbilities());
+        return pokemon.getAbilities();
     }
 
     // Obtener las areas

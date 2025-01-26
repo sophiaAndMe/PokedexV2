@@ -36,24 +36,6 @@ public class PokedexApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		//pokemonRepository.deleteAll();
-
-
-		 	threadDataBase.firstPokemon();
-			threadDataBase.secondPokemon();
-			threadDataBase.thirdPokemon();
-
-
-//        String pokemonName = "metapod";
-//
-//		Optional<Pokemon> pokemonOptional = pokemonRepository.findByName(pokemonName);
-//		if(pokemonOptional.isPresent()) {
-//			Pokemon pokemon = pokemonOptional.get();
-//			System.out.println("Se ha encontrado: " + pokemon.getName());
-//		}else{
-//			System.out.println("pokemon no encontrado :( ");
-//		}
-
 
 	}
 	}

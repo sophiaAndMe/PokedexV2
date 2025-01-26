@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(uniqueConstraints =
+
+@Table(name = "pokemon_location", uniqueConstraints =
         {@UniqueConstraint(columnNames = {"name"})})
 public class PokemonLocation {
 

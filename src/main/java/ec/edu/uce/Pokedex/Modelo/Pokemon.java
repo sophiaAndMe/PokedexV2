@@ -25,13 +25,13 @@ public class Pokemon {
     @Column(name = "order_pokemon")
     private Integer order ;
     private Integer weight;
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "pokemon_ability_seq", // Nombre único para la tabla intermedia
             joinColumns = @JoinColumn(name = "pokemon_id"), // Columna que referencia a Pokemon
             inverseJoinColumns = @JoinColumn(name = "ability_id") // Columna que referencia a Ability
     )
-    List<PokemonAbility> abilities = new ArrayList<>();
+    private List<PokemonAbility> abilities = new ArrayList<>();
     //private List<NamedApiResource<PokemonForm>> forms;
    // private List<VersionGameIndex> gameIndices;
    // private List<PokemonHeldItem> heldItems;

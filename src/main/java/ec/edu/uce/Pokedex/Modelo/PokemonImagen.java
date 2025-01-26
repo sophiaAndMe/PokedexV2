@@ -3,6 +3,7 @@ package ec.edu.uce.Pokedex.Modelo;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "pokemon_imagen")
 public class PokemonImagen {
 
     @Id
