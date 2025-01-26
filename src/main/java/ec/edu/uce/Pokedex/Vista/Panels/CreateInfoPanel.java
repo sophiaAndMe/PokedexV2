@@ -37,7 +37,7 @@ public class CreateInfoPanel {
         JLabel weightLabel = new JLabel("Weight: " + pokemon.getWeight() + " kg");
 
         // lo veremos despues
-        List<PokemonAbility> pokemonAbilityList = pokemonService.findAbilities(pokemon.getId());
+        List<PokemonAbility> pokemonAbilityList = pokemonService.findAbilities(Math.toIntExact((Long) pokemon.getId()));
         JLabel abilityPanel = null;
 
         for(PokemonAbility pokemonAbility : pokemonAbilityList){

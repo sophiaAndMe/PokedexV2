@@ -27,26 +27,26 @@ public class PokemonService {
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
     private  Pokemon pokemon;
-    private  PokemonUsuario pokemonUsuario;
-    private final pokemonUserRepository pokemonUserRepository;
+    private Usuario usuario;
+    private final UsuarioRepository UsuarioRepository;
     private ManagerDuplicate managerDuplicate;
     private SaveImagen saveImagen;
 
     public PokemonService(PokemonRepository pokemonRepository,
                           pokemonAbilityRepository pokemonAbilityRepository,
                           pokemonAreaRepository pokemonAreaRepository,
-                          pokemonUserRepository pokemonUserRepository,
+                          UsuarioRepository UsuarioRepository,
                           ManagerDuplicate managerDuplicate,
                           SaveImagen saveImagen, Pokemon pokemon,
-                          PokemonUsuario pokemonUsuario) {
+                          Usuario usuario) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonAbilityRepository = pokemonAbilityRepository;
         this.pokemonAreaRepository = pokemonAreaRepository;
         this.managerDuplicate = managerDuplicate;
         this.saveImagen = saveImagen;
         this.pokemon = pokemon;
-        this.pokemonUserRepository = pokemonUserRepository;
-        this.pokemonUsuario = pokemonUsuario;
+        this.UsuarioRepository = UsuarioRepository;
+        this.usuario = usuario;
     }
 
 
@@ -143,9 +143,9 @@ public class PokemonService {
     }
 
     public void saveUser(String name, String genero){
-    pokemonUsuario.setName(name);
-    pokemonUsuario.setGenero(genero);
-    pokemonUserRepository.save(pokemonUsuario);
+    usuario.setName(name);
+    usuario.setGenero(genero);
+    UsuarioRepository.save(usuario);
 
     }
 

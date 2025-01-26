@@ -2,10 +2,11 @@ package ec.edu.uce.Pokedex.Vista;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
+import ec.edu.uce.Pokedex.Modelo.Usuario;
 import ec.edu.uce.Pokedex.Service.PokemonRepository;
 import ec.edu.uce.Pokedex.Service.PokemonService;
 import ec.edu.uce.Pokedex.Service.complements.ThreadDataBase;
-import ec.edu.uce.Pokedex.Service.pokemonUserRepository;
+import ec.edu.uce.Pokedex.Service.UsuarioRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -16,20 +17,22 @@ public class UserRegistrationUI {
 
     // uso del repositorio
     private static PokemonService pokemonService;
-    private static pokemonUserRepository pokemonUserRepository;
+    private static UsuarioRepository UsuarioRepository;
     private static ThreadDataBase threadDataBase;
     private static PokemonRepository pokemonRepository;
     private static Pokemon pokemon;
+    private static Usuario usuario;
     // metodo de registro de usuario
     public static void main(String[] args) {
 
         //aqui le damos el contexto de spring
         ApplicationContext context = new AnnotationConfigApplicationContext("ec.edu.uce.Pokedex");
         pokemonService = context.getBean(PokemonService.class);
-        pokemonUserRepository = context.getBean(pokemonUserRepository.class);
+        UsuarioRepository = context.getBean(UsuarioRepository.class);
         threadDataBase = context.getBean(ThreadDataBase.class);
         pokemonRepository = context.getBean(PokemonRepository.class);
         pokemon = context.getBean(Pokemon.class);
+        usuario = context.getBean(Usuario.class);
 
         JFrame frame = new JFrame("Registro de aventurero Pokemon!!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,7 +54,7 @@ public class UserRegistrationUI {
             String generoLogin = (String)generoCombo.getSelectedItem();
 
             // verificar si el usuario existe
-            Optional<PokemonUsuario> user = pokemonUserRepository.findByName(name);
+            Optional<Usuario> user = UsuarioRepository.findByName(name);
             if(user.isPresent()) {
                 JOptionPane.showMessageDialog(frame, "Usuario ya existe" + name);
                 if(pokemon==null){
@@ -60,23 +63,18 @@ public class UserRegistrationUI {
                     try {
                         Thread.sleep(2000);
                         JOptionPane.showMessageDialog(frame, "Cargando pokemons...");
+                        new PokedexUI(usuario);
                     }catch (InterruptedException exx){
                         exx.printStackTrace();
                     }
+                    // modificado
 
-                    new PokedexUI(pokemonRepository);
                     frame.dispose();
                 }
             }else{
                 pokemonService.saveUser(name, generoLogin);
                 JOptionPane.showMessageDialog(frame, "Usuario registrado exitosamente");
-                try {
-                    Thread.sleep(2000);
-                    JOptionPane.showMessageDialog(frame, "Cargando pokemons...");
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-                new PokedexUI(pokemonRepository);
+                new StarterSelectionUI(context, usuario);
                 frame.dispose();
             }
         });

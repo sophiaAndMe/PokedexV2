@@ -4,21 +4,21 @@ import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Component
-@Table(name = "pokemon" , uniqueConstraints =
-        {@UniqueConstraint(columnNames = {"name"})})
-public class Pokemon {
+@Table(name = "pokemon")
+public class Pokemon  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @Column(nullable = false)
+    @Column(name = "pokemon_id") // Nombre explícito de la columna
+    private Long id;
+
+    @Column(name = "name", nullable = false, unique = true) // Nombre explícito de la columna
     private String name;
+
     private Integer baseExperience;
     private Integer height;
     private Boolean is_Default;
@@ -46,21 +46,27 @@ public class Pokemon {
     @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PokemonImagen> sprites = new ArrayList<>();
 
-   // private List<PokemonMove> moves;
-   // private PokemonSprites sprites;
-    //private NamedApiResource<PokemonSpecies> species;
-    //private List<PokemonStat> stats;
-   // private List<PokemonType> types;
-    //private List<PokemonTypePast> pastTypes;
+    // tabla intermedia
+    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PokemonUsuario> pokemonUsuarios = new ArrayList<>();
+
 
     // getter and setters
 
 
-    public Integer getId() {
+
+    public List<PokemonUsuario> getPokemonUsuarios() {
+        return pokemonUsuarios;
+    }
+
+    public void setPokemonUsuarios(List<PokemonUsuario> pokemonUsuarios) {
+        this.pokemonUsuarios = pokemonUsuarios;
+    }
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -144,19 +150,7 @@ public class Pokemon {
         this.sprites = sprites;
     }
 
-    @Override
-    public String toString() {
-        return "Pokemon{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", baseExperience=" + baseExperience +
-                ", height=" + height +
-                ", is_Default=" + is_Default +
-                ", order=" + order +
-                ", weight=" + weight +
-                ", abilities=" + abilities +
-                ", location_area_encounters=" + location_area_encounters +
-                ", sprites=" + sprites +
-                '}';
-    }
+
+
+
 }

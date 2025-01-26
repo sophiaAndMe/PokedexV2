@@ -1,132 +1,90 @@
-package ec.edu.uce.Pokedex.Vista;
 
+package ec.edu.uce.Pokedex.Vista;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
+import ec.edu.uce.Pokedex.Modelo.Usuario;
 import ec.edu.uce.Pokedex.Service.PokemonRepository;
-import ec.edu.uce.Pokedex.Service.PokemonService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class PokedexUI {
-
-    // servicios
     private static PokemonRepository pokemonRepository;
 
-    public PokedexUI(PokemonRepository pokemonRepository) {
-        // implementado contexto
-        // Inicializa el contexto de Spring
-
+    public PokedexUI(Usuario usuario) {
         ApplicationContext context = new AnnotationConfigApplicationContext("ec.edu.uce.Pokedex");
 
-        // Obtén el servicio desde el contexto
+        // Repositorio de Pokémon
         pokemonRepository = context.getBean(PokemonRepository.class);
 
+        // Ventana principal
+        JFrame frame = new JFrame("Pokedex");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLayout(new BorderLayout());
 
-        PokemonRepository finalPokemonRepository = pokemonRepository;
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Pokedex");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
+        JLabel titleLabel = new JLabel("Tu Pokédex", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        frame.add(titleLabel, BorderLayout.NORTH);
 
-            // Main Panel
-            JPanel mainPanel = new JPanel(new BorderLayout());
+        // Panel para mostrar todos los Pokémon
+        JPanel pokemonPanel = new JPanel();
+        pokemonPanel.setLayout(new GridLayout(0, 4, 10, 10)); // Grilla de 4 columnas
 
-            // Left Panel (List of Pokémon)
-            DefaultListModel<String> pokemonListModel = new DefaultListModel<>();
-            JList<String> pokemonList = new JList<>(pokemonListModel);
+        // Obtener todos los Pokémon y los capturados por el usuario
+        List<Pokemon> allPokemons = pokemonRepository.findAll(); // Lista completa
+        List<Pokemon> capturedPokemons = usuario.getPokemons();  // Pokémon capturados
 
-            for (Pokemon pokemon : finalPokemonRepository.findAll()) {
-                pokemonListModel.addElement(pokemon.getId() + " " + pokemon.getName());
+        for (Pokemon pokemon : allPokemons) {
+            boolean isCaptured = capturedPokemons.contains(pokemon);
+
+            JPanel pokemonCard = createPokemonCard(pokemon, isCaptured);
+            pokemonPanel.add(pokemonCard);
+        }
+
+        JScrollPane scrollPane = new JScrollPane(pokemonPanel);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private JPanel createPokemonCard(Pokemon pokemon, boolean isCaptured) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+        // Imagen del Pokémon
+        JLabel imageLabel;
+        if (pokemon.getDefault()) {
+            imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/" + pokemon.getName().toLowerCase() + "_front.png"));
+        } else {
+            imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/unknown.png")); // Imagen genérica para Pokémon no capturados
+        }
+        imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Nombre del Pokémon
+        JLabel nameLabel = new JLabel(isCaptured ? pokemon.getName() : "???");
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Botón "Más información" (solo para Pokémon capturados)
+        JButton infoButton = new JButton("Más información");
+        infoButton.setEnabled(isCaptured);
+        infoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        infoButton.addActionListener(e -> {
+            if (isCaptured) {
+                new PokemonDetailsUI(pokemon); // Abre la ventana con más detalles
             }
-
-            JScrollPane listScrollPane = new JScrollPane(pokemonList);
-            listScrollPane.setPreferredSize(new Dimension(200, 600));
-
-            mainPanel.add(listScrollPane, BorderLayout.WEST);
-
-            // Right Panel (Details of Selected Pokémon)
-            JPanel detailsPanel = new JPanel();
-            detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
-
-            JLabel pokemonImage = new JLabel();
-            pokemonImage.setPreferredSize(new Dimension(600, 200));
-            pokemonImage.setHorizontalAlignment(SwingConstants.CENTER);
-            pokemonImage.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-            JLabel pokemonNameLabel = new JLabel("Name: ", SwingConstants.RIGHT);
-
-            detailsPanel.removeAll();
-            detailsPanel.add(Box.createVerticalStrut(20));
-            detailsPanel.add(pokemonNameLabel); // nombre del pokemon
-            detailsPanel.add(Box.createVerticalStrut(10));
-            detailsPanel.add(pokemonImage); //imagen del pokemon
-            detailsPanel.add(Box.createVerticalStrut(10));
-
-            // poner aqui arriba las abilidades
-
-            //button
-            JButton moreInfoButton = new JButton("Mas Informacion...");
-            moreInfoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            detailsPanel.add(moreInfoButton);
-            detailsPanel.revalidate();
-            detailsPanel.repaint();
-
-            //button
-            moreInfoButton.addActionListener(e2 -> {
-                String selectedPokemon2 = pokemonList.getSelectedValue();
-                if (selectedPokemon2 != null) {
-                    int pokemonId = Integer.parseInt(selectedPokemon2.split(" ")[0]);
-                    Pokemon selected = finalPokemonRepository.findById(pokemonId);
-
-                    if (selected != null) {
-                        // Abre la nueva ventana con la información completa del Pokémon
-                        new PokemonDetailsUI(selected);
-                    }
-                }
-            });
-
-            mainPanel.add(detailsPanel, BorderLayout.CENTER);
-
-            // Add Main Panel to Frame
-            frame.add(mainPanel);
-
-            pokemonList.addListSelectionListener(e -> {
-                if (!e.getValueIsAdjusting()) {
-                    String selectedPokemon = pokemonList.getSelectedValue();
-
-                    if (selectedPokemon != null) {
-                        try {
-                            // Extrae el ID del Pokémon (antes del espacio en el texto de la lista)
-                            int pokemonId = Integer.parseInt(selectedPokemon.split(" ")[0]);
-
-                            // Obtén el Pokémon desde el repositorio
-                            Pokemon pokemon = finalPokemonRepository.findById(pokemonId);
-
-                            if (pokemon != null) {
-                                // Actualiza los detalles en el panel
-                                pokemonNameLabel.setText(pokemon.getName());
-                                pokemonNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);// Nombre arriba
-                                pokemonImage.setIcon(new ImageIcon(new ImageIcon("src/main/resources/static/images/" + pokemon.getName() + "_front.png")
-                                        .getImage().getScaledInstance(350, 350, Image.SCALE_SMOOTH)));
-                                pokemonImage.setAlignmentX(Component.CENTER_ALIGNMENT);// Imagen más grande
-                            } else {
-                                // Si no encuentra el Pokémon, limpia los detalles
-                                pokemonImage.setIcon(null);
-                                pokemonNameLabel.setText("Name: ");
-                            }
-                        } catch (NumberFormatException ex) {
-                            // Manejo de errores por si el ID no es un número
-                            System.err.println("Error parsing Pokémon ID: " + ex.getMessage());
-                        }
-                    }
-                }
-            });
-
-            frame.setVisible(true);
         });
 
+        // Agregar componentes al panel
+        card.add(imageLabel);
+        card.add(nameLabel);
+        card.add(infoButton);
+
+        return card;
     }
 }

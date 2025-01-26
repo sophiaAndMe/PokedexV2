@@ -38,7 +38,7 @@ public class CreateAreaPanel {
         // Buscar áreas en el repositorio
         System.out.println("Buscando áreas para: " + pokemon.getName());
 
-            List<PokemonLocation> locations = pokemonService.getPokemonLocations(pokemon.getId()); // Asegúrate que devuelve una lista
+            List<PokemonLocation> locations = pokemonService.getPokemonLocations(Math.toIntExact((Long) pokemon.getId())); // Asegúrate que devuelve una lista
 
             if (locations != null ) {
                 for (PokemonLocation location : locations) {

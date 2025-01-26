@@ -3,39 +3,63 @@ package ec.edu.uce.Pokedex.Modelo;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Entity
 @Component
-@Table(name = "pokemon_usuario")
-public class PokemonUsuario {
+@Table(name = "pokemon_usuario_seq") // Nombre explícito de la tabla
+public class PokemonUsuario  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private String name;
-    private String genero;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
-    public int getId() {
+    @ManyToOne
+    @JoinColumn(name = "pokemon_id", nullable = false)
+    private Pokemon pokemon;
+
+    @Column(name = "capture_date")
+    private String captureDate;
+
+    // Getters y setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
-    public String getGenero() {
-        return genero;
+    public Pokemon getPokemon() {
+        return pokemon;
     }
 
-    public void setGenero(String genero) {
-        this.genero = genero;
+    public void setPokemon(Pokemon pokemon) {
+        this.pokemon = pokemon;
     }
+
+    public String getCaptureDate() {
+        return captureDate;
+    }
+
+    public void setCaptureDate(String captureDate) {
+        this.captureDate = captureDate;
+    }
+
+
+
+
+
 }

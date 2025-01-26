@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PokemonRepository extends JpaRepository<Pokemon, Integer> {
+public interface PokemonRepository extends JpaRepository<Pokemon, Long> {
 
     Optional<Pokemon> findByName(String name);
-    Pokemon findById(int id);
+    Pokemon findById(long id);
+
 }

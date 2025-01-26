@@ -14,17 +14,13 @@ public class ThreadDataBase {
         this.pokemonService = pokemonService;
     }
 
-    /*
-     * PROBLEMAS DE HILOS
-     * DEBERIA CARGAR LAS IMAGENES SEGUN LOS HILOS
-     */
     public void firstPokemon(){
 
         Thread thread = new Thread(() -> {
             System.out.println("Ejecutando los primero 166 pokemons...");
             try {
                 Thread.sleep(1000);
-                for(int i=1;i<=300 ;i++){
+                for(int i=1;i<=25 ;i++){
                     pokemonService.fetchAndSavePokemon(i);
                 }
                 System.out.println("Tarea Completada");
