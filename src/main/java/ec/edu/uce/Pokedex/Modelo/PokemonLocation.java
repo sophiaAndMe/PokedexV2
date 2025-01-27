@@ -18,8 +18,6 @@ public class PokemonLocation {
     @ManyToMany(mappedBy = "location_area_encounters")
     private List<Pokemon> pokemons = new ArrayList<>();
 
-
-
     public List<Pokemon> getPokemons() {
         return pokemons;
     }

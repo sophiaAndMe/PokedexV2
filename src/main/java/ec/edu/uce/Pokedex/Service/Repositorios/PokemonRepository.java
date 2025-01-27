@@ -1,4 +1,4 @@
-package ec.edu.uce.Pokedex.Service;
+package ec.edu.uce.Pokedex.Service.Repositorios;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import org.springframework.data.jpa.repository.JpaRepository;

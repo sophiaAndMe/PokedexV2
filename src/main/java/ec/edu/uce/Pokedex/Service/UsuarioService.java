@@ -3,15 +3,11 @@ package ec.edu.uce.Pokedex.Service;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
 import ec.edu.uce.Pokedex.Modelo.Usuario;
+import ec.edu.uce.Pokedex.Service.Repositorios.PokemonUsuarioRepository;
+import ec.edu.uce.Pokedex.Service.Repositorios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 @Service

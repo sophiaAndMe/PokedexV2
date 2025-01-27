@@ -1,4 +1,4 @@
-package ec.edu.uce.Pokedex.Vista.Panels;
+package ec.edu.uce.Pokedex.Controlador.panel;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 
@@ -35,13 +35,17 @@ public class CreateInfoPanel {
 
         JLabel heightLabel = new JLabel("Height: " + pokemon.getHeight() + " m");
         JLabel weightLabel = new JLabel("Weight: " + pokemon.getWeight() + " kg");
+        heightLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        weightLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        heightLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        weightLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // lo veremos despues
         List<PokemonAbility> pokemonAbilityList = pokemonService.findAbilities(Math.toIntExact((Long) pokemon.getId()));
         JLabel abilityPanel = null;
 
         for(PokemonAbility pokemonAbility : pokemonAbilityList){
-            abilityPanel = new JLabel(pokemonAbility.getName());
+            abilityPanel = new JLabel("Habilidad de " +pokemon.getName()+ " es -> " +pokemonAbility.getName());
             abilityPanel.setFont(new Font("Arial", Font.PLAIN, 20));
             abilityPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 

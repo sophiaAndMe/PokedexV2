@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class ThreadDataBase {
     private final PokemonService pokemonService;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(2); // Pool de 2 hilos
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4); // Pool de 2 hilos
 
     public ThreadDataBase(PokemonService pokemonService) {
         this.pokemonService = pokemonService;
@@ -31,18 +31,20 @@ public class ThreadDataBase {
                 System.err.printf("Error al cargar Pokémon del %d al %d: %s%n", start, end, e.getMessage());
             }
         });
+        shutdownExecutor();
     }
 
     public void iniciarCargaDePokemons() {
         // Dividir la carga en dos rangos
-        cargarPokemons(1, 25);
-        cargarPokemons(26, 50);
+        cargarPokemons(1, 10);
+        cargarPokemons(11, 12);
+        cargarPokemons(12, 13);
     }
 
     public void shutdownExecutor() {
         executorService.shutdown();
         try {
-            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!executorService.awaitTermination(6, TimeUnit.MINUTES)) {
                 executorService.shutdownNow();
             }
         } catch (InterruptedException e) {

@@ -32,9 +32,6 @@ public class Pokemon  {
             inverseJoinColumns = @JoinColumn(name = "ability_id") // Columna que referencia a Ability
     )
     private List<PokemonAbility> abilities = new ArrayList<>();
-    //private List<NamedApiResource<PokemonForm>> forms;
-   // private List<VersionGameIndex> gameIndices;
-   // private List<PokemonHeldItem> heldItems;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "pokemon_location_seq",
@@ -52,8 +49,6 @@ public class Pokemon  {
 
 
     // getter and setters
-
-
 
     public List<PokemonUsuario> getPokemonUsuarios() {
         return pokemonUsuarios;

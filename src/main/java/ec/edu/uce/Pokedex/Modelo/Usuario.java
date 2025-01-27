@@ -27,7 +27,6 @@ public class Usuario {
     private List<PokemonUsuario> pokemonUsuarios = new ArrayList<>();
 
     public Usuario() {
-
     }
 
     public Usuario(String name, String genero){

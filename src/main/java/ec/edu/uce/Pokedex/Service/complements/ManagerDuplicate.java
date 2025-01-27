@@ -4,9 +4,9 @@ package ec.edu.uce.Pokedex.Service.complements;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonAbility;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
-import ec.edu.uce.Pokedex.Service.PokemonRepository;
-import ec.edu.uce.Pokedex.Service.pokemonAbilityRepository;
-import ec.edu.uce.Pokedex.Service.pokemonAreaRepository;
+import ec.edu.uce.Pokedex.Service.Repositorios.PokemonRepository;
+import ec.edu.uce.Pokedex.Service.Repositorios.pokemonAbilityRepository;
+import ec.edu.uce.Pokedex.Service.Repositorios.pokemonAreaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

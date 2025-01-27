@@ -1,11 +1,10 @@
 package ec.edu.uce.Pokedex.Service;
 
 import ec.edu.uce.Pokedex.Modelo.*;
+import ec.edu.uce.Pokedex.Service.Repositorios.*;
 import ec.edu.uce.Pokedex.Service.complements.ManagerDuplicate;
 import ec.edu.uce.Pokedex.Service.complements.SaveImagen;
 import org.hibernate.Hibernate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,20 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-/*
-*APLICAR
-*RESPONSABILIDAD
-* UNICA :) (mas legible)
- */
 @Service
 public class PokemonService {
 
 
     /// es final para mantener la integridad de los POKEMOS
     private PokemonRepository pokemonRepository;
-    private final pokemonAbilityRepository pokemonAbilityRepository;
-    private final pokemonAreaRepository pokemonAreaRepository;
+    private final ec.edu.uce.Pokedex.Service.Repositorios.pokemonAbilityRepository pokemonAbilityRepository;
+    private final ec.edu.uce.Pokedex.Service.Repositorios.pokemonAreaRepository pokemonAreaRepository;
     private  Pokemon pokemon;
     private Usuario usuario;
     private final UsuarioRepository usuarioRepository;
@@ -170,31 +163,6 @@ public class PokemonService {
         Hibernate.initialize(pokemon.getLocation_area_encounters());
         return pokemon.getLocation_area_encounters();
     }
-
-
-//    // Método para capturar un Pokémon
-//    public void capturarPokemon(Usuario usuario, Pokemon pokemon) {
-//        // Verificar si el Pokémon ya fue capturado
-//        boolean alreadyCaptured = pokemonUsuarioRepository.existsByUsuarioAndPokemon(usuario, pokemon);
-//        if (alreadyCaptured) {
-//            System.out.println("El Pokémon ya fue capturado por el usuario.");
-//            return;
-//        }
-//
-//        // Crear nueva relación en la tabla intermedia
-//        PokemonUsuario pokemonUsuario = new PokemonUsuario();
-//        pokemonUsuario.setUsuario(usuario);
-//        pokemonUsuario.setPokemon(pokemon);
-//
-//        // Guardar en la base de datos
-//        pokemonUsuarioRepository.save(pokemonUsuario);
-//
-//        // Sincronizar la lista en memoria
-//        usuario.getPokemonUsuarios().add(pokemonUsuario);
-//        usuarioRepository.save(usuario);
-//
-//        System.out.println("Pokémon capturado exitosamente.");
-//    }
 
 
 

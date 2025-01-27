@@ -1,14 +1,13 @@
-package ec.edu.uce.Pokedex.Vista;
+package ec.edu.uce.Pokedex.Controlador;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
-import ec.edu.uce.Pokedex.Vista.Panels.CreateInfoPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static ec.edu.uce.Pokedex.Vista.Panels.CreateAreaPanel.createAreaPanel;
-import static ec.edu.uce.Pokedex.Vista.Panels.CreateFormsPanel.createFormsPanel;
-import static ec.edu.uce.Pokedex.Vista.Panels.CreateInfoPanel.createInfoPanel;
+import static ec.edu.uce.Pokedex.Controlador.panel.CreateAreaPanel.createAreaPanel;
+import static ec.edu.uce.Pokedex.Controlador.panel.CreateFormsPanel.createFormsPanel;
+import static ec.edu.uce.Pokedex.Controlador.panel.CreateInfoPanel.createInfoPanel;
 
 public class PokemonDetailsUI {
 

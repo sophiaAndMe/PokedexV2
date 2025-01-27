@@ -1,19 +1,14 @@
-package ec.edu.uce.Pokedex.Vista.Panels;
+package ec.edu.uce.Pokedex.Controlador.panel;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 import ec.edu.uce.Pokedex.Modelo.PokemonLocation;
-import ec.edu.uce.Pokedex.Service.PokemonRepository;
 import ec.edu.uce.Pokedex.Service.PokemonService;
-import ec.edu.uce.Pokedex.Service.pokemonAreaRepository;
-import org.hibernate.Session;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class CreateAreaPanel {
     // area

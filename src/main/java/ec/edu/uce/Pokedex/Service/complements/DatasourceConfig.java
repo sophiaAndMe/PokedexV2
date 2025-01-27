@@ -1,7 +1,6 @@
 package ec.edu.uce.Pokedex.Service.complements;
 
 import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.jpa.boot.spi.EntityManagerFactoryBuilder;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

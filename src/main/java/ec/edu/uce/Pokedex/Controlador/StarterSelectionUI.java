@@ -1,13 +1,11 @@
-package ec.edu.uce.Pokedex.Vista;
+package ec.edu.uce.Pokedex.Controlador;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
-import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
+//import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
 import ec.edu.uce.Pokedex.Modelo.Usuario;
-import ec.edu.uce.Pokedex.Service.PokemonRepository;
-import ec.edu.uce.Pokedex.Service.UsuarioRepository;
+import ec.edu.uce.Pokedex.Service.Repositorios.PokemonRepository;
 import ec.edu.uce.Pokedex.Service.UsuarioService;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,12 +89,11 @@ public class StarterSelectionUI {
             // Asocia el Pokémon inicial al usuario
             usuarioService.asignarPokemonInicial(usuario, pokemon);
 
-            
+
             // Muestra un mensaje de éxito
             JOptionPane.showMessageDialog(parentFrame, "¡Has elegido a " + pokemon.getName() + "!");
 
             // Cierra la ventana actual y abre PokedexUI
-
             SwingUtilities.invokeLater(() -> new PokedexUI(pokemonRepository));
             parentFrame.dispose();
         });

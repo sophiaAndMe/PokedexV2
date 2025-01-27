@@ -1,6 +1,7 @@
 package ec.edu.uce.Pokedex.Service;
 
 import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
+import ec.edu.uce.Pokedex.Service.Repositorios.PokemonUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
