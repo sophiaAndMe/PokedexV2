@@ -19,4 +19,5 @@ import java.util.Optional;
     @Transactional
     @Query("UPDATE Pokemon p SET p.is_Default = :estado WHERE p.id = :id")
     void updatePokemonIsDefault(@Param("id") Long id, @Param("estado") boolean estado);
+
 }

@@ -13,9 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PokedexApplication implements CommandLineRunner {
 
 
-	/// para cargar los pokemos :)
-	@Autowired
-	ThreadDataBase threadDataBase;
 
 	private final PokemonService pokemonService;
 	private final PokemonRepository pokemonRepository;
@@ -35,8 +32,6 @@ public class PokedexApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-
-		threadDataBase.secondPokemon();
 
 	}
 	}

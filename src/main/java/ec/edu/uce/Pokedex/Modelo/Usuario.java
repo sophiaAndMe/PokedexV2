@@ -11,10 +11,12 @@ import java.util.List;
 @Component
 public class Usuario {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String name;
     private String genero;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -24,6 +26,14 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PokemonUsuario> pokemonUsuarios = new ArrayList<>();
 
+    public Usuario() {
+
+    }
+
+    public Usuario(String name, String genero){
+        this.name = name;
+        this.genero = genero;
+    }
 
     public List<PokemonUsuario> getPokemonUsuarios() {
         return pokemonUsuarios;

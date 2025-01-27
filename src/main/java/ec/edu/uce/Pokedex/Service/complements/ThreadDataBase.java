@@ -4,74 +4,50 @@ import ec.edu.uce.Pokedex.Service.PokemonService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ThreadDataBase {
-
     private final PokemonService pokemonService;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2); // Pool de 2 hilos
 
     public ThreadDataBase(PokemonService pokemonService) {
         this.pokemonService = pokemonService;
     }
 
-    public void firstPokemon(){
-
-        Thread thread = new Thread(() -> {
-            System.out.println("Ejecutando los primero 166 pokemons...");
+    public void cargarPokemons(int start, int end) {
+        executorService.submit(() -> {
+            System.out.printf("Ejecutando Pokémon del %d al %d...%n", start, end);
             try {
-                Thread.sleep(1000);
-                for(int i=1;i<=25 ;i++){
+                for (int i = start; i <= end; i++) {
                     pokemonService.fetchAndSavePokemon(i);
                 }
-                System.out.println("Tarea Completada");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.printf("Tarea completada: Pokémon del %d al %d.%n", start, end);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.printf("Error al cargar Pokémon del %d al %d: %s%n", start, end, e.getMessage());
             }
-            System.out.println("tarea 1 completado!");
         });
-        thread.start();
     }
 
-    public void secondPokemon(){
-
-        Thread thread2 = new Thread(()-> {
-
-            System.out.println("Ejecutando los 167-332 pokemons...");
-            try {
-
-                Thread.sleep(5000);
-                for(int i=26;i<=30 ;i++){
-                    pokemonService.fetchAndSavePokemon(i);
-                }
-                System.out.println("tarea 2 completada!");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        });
-        thread2.start();
+    public void iniciarCargaDePokemons() {
+        // Dividir la carga en dos rangos
+        cargarPokemons(1, 25);
+        cargarPokemons(26, 50);
     }
 
-    public void thirdPokemon(){
-        Thread thread3 = new Thread(()-> {
-
-            System.out.println("Ejecutando los 333-449 pokemons...");
-            try {
-                Thread.sleep(0);
-                for(int i=602;i<=903 ;i++){
-                    pokemonService.fetchAndSavePokemon(i);
-                }
-                System.out.println("tarea 3 completada!");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+    public void shutdownExecutor() {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
             }
-        });
-        thread3.start();
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
     }
 }
+

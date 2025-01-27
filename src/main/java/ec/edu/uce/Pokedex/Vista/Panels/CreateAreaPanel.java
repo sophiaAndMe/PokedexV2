@@ -42,7 +42,7 @@ public class CreateAreaPanel {
 
             if (locations != null ) {
                 for (PokemonLocation location : locations) {
-                    JLabel locationLabel = new JLabel("Ability:" + location.getName());
+                    JLabel locationLabel = new JLabel("Areas: " + location.getName());
                     locationLabel.setFont(new Font("Arial", Font.PLAIN, 16));
                     locationLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
                     panel.add(locationLabel);

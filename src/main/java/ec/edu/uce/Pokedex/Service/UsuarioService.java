@@ -5,6 +5,7 @@ import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
 import ec.edu.uce.Pokedex.Modelo.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -17,28 +18,34 @@ import java.util.concurrent.Executors;
 public class UsuarioService {
 
     @Autowired
-    private PokemonUsuarioRepository pokemonUsuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private PokemonRepository pokemonRepository;
+    private PokemonUsuarioRepository pokemonUsuarioRepository;
 
+    @Transactional
     public void asignarPokemonInicial(Usuario usuario, Pokemon pokemon) {
-        // Buscar el Pokémon
+        // Asegurarse de que el usuario está persistido
+        if (usuario.getId() == null) {
+            usuarioRepository.save(usuario); // Guardar usuario si no está persistido
+        }
+
+        // Crear relación entre usuario y Pokémon
         PokemonUsuario pokemonUsuario = new PokemonUsuario();
         pokemonUsuario.setUsuario(usuario);
         pokemonUsuario.setPokemon(pokemon);
 
-        // Guardar en la base de datos
+        // Guardar la relación en la base de datos
         pokemonUsuarioRepository.save(pokemonUsuario);
     }
 
     public boolean verificarCaptura(Usuario usuario, Pokemon pokemon) {
-        // Buscar en la tabla intermedia si el usuario ya capturó el Pokémon
-        return usuario.getPokemons().contains(pokemon);
+        // Lógica para verificar si el Pokémon ya fue capturado
+        return pokemonUsuarioRepository.existsByUsuarioAndPokemon(usuario, pokemon);
+    }
+    public Usuario guardarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 
-
-
-
-
 }
+

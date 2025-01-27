@@ -16,7 +16,7 @@ public class Pokemon  {
     @Column(name = "pokemon_id") // Nombre explícito de la columna
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true) // Nombre explícito de la columna
+    @Column(nullable = false, unique = true) // Nombre explícito de la columna
     private String name;
 
     private Integer baseExperience;

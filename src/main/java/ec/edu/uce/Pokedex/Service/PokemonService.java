@@ -30,25 +30,30 @@ public class PokemonService {
     private final pokemonAreaRepository pokemonAreaRepository;
     private  Pokemon pokemon;
     private Usuario usuario;
-    private final UsuarioRepository UsuarioRepository;
+    private final UsuarioRepository usuarioRepository;
     private ManagerDuplicate managerDuplicate;
+    private final PokemonUsuarioRepository pokemonUsuarioRepository;
     private SaveImagen saveImagen;
+
 
     public PokemonService(PokemonRepository pokemonRepository,
                           pokemonAbilityRepository pokemonAbilityRepository,
                           pokemonAreaRepository pokemonAreaRepository,
-                          UsuarioRepository UsuarioRepository,
+                          UsuarioRepository usuarioRepository,
                           ManagerDuplicate managerDuplicate,
-                          SaveImagen saveImagen, Pokemon pokemon,
-                          Usuario usuario) {
+                          PokemonUsuarioRepository pokemonUsuarioRepository,
+                          Pokemon pokemon,
+                          Usuario usuario,
+                          SaveImagen saveImagen) {
         this.pokemonRepository = pokemonRepository;
         this.pokemonAbilityRepository = pokemonAbilityRepository;
         this.pokemonAreaRepository = pokemonAreaRepository;
         this.managerDuplicate = managerDuplicate;
-        this.saveImagen = saveImagen;
+        this.pokemonUsuarioRepository = pokemonUsuarioRepository;
         this.pokemon = pokemon;
-        this.UsuarioRepository = UsuarioRepository;
+        this.usuarioRepository = usuarioRepository;
         this.usuario = usuario;
+        this.saveImagen = saveImagen;
     }
 
 
@@ -147,7 +152,7 @@ public class PokemonService {
     public void saveUser(String name, String genero){
     usuario.setName(name);
     usuario.setGenero(genero);
-    UsuarioRepository.save(usuario);
+    usuarioRepository.save(usuario);
 
     }
 
@@ -167,12 +172,31 @@ public class PokemonService {
     }
 
 
-    public void onPokemonCapture(Pokemon pokemon, Boolean state) {
-        // Repositorio de Pokémon
-        pokemon.setIs_Default(state);
-        pokemonRepository.updatePokemonIsDefault(pokemon.getId(),pokemon.getIs_Default());
+//    // Método para capturar un Pokémon
+//    public void capturarPokemon(Usuario usuario, Pokemon pokemon) {
+//        // Verificar si el Pokémon ya fue capturado
+//        boolean alreadyCaptured = pokemonUsuarioRepository.existsByUsuarioAndPokemon(usuario, pokemon);
+//        if (alreadyCaptured) {
+//            System.out.println("El Pokémon ya fue capturado por el usuario.");
+//            return;
+//        }
+//
+//        // Crear nueva relación en la tabla intermedia
+//        PokemonUsuario pokemonUsuario = new PokemonUsuario();
+//        pokemonUsuario.setUsuario(usuario);
+//        pokemonUsuario.setPokemon(pokemon);
+//
+//        // Guardar en la base de datos
+//        pokemonUsuarioRepository.save(pokemonUsuario);
+//
+//        // Sincronizar la lista en memoria
+//        usuario.getPokemonUsuarios().add(pokemonUsuario);
+//        usuarioRepository.save(usuario);
+//
+//        System.out.println("Pokémon capturado exitosamente.");
+//    }
 
-    }
+
 
 
 }

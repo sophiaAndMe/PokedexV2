@@ -25,7 +25,13 @@ public class StarterSelectionUI {
 
         pokemonRepository = context.getBean(PokemonRepository.class);
         usuarioService = context.getBean(UsuarioService.class);
-        this.usuario = usuario;
+
+        // Persistir el usuario si no está guardado
+        if (usuario.getId() == null) {
+            usuario = usuarioService.guardarUsuario(usuario);
+        }
+
+        this.usuario = usuario;;
 
         JFrame frame = new JFrame("Seleccion Pokemon :)");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,12 +91,13 @@ public class StarterSelectionUI {
             // Asocia el Pokémon inicial al usuario
             usuarioService.asignarPokemonInicial(usuario, pokemon);
 
+            
             // Muestra un mensaje de éxito
             JOptionPane.showMessageDialog(parentFrame, "¡Has elegido a " + pokemon.getName() + "!");
 
             // Cierra la ventana actual y abre PokedexUI
 
-            SwingUtilities.invokeLater(() -> new PokedexUI(usuario));
+            SwingUtilities.invokeLater(() -> new PokedexUI(pokemonRepository));
             parentFrame.dispose();
         });
 
