@@ -39,6 +39,7 @@ public class ThreadDataBase {
         cargarPokemons(1, 333);
         cargarPokemons(334, 666);
         cargarPokemons(667, 1000);
+
     }
 
     public void shutdownExecutor() {
