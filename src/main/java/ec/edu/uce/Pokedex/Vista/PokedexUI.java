@@ -163,21 +163,22 @@ public class PokedexUI {
         if (pokemon.getIs_Default()) {
             imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/" + pokemon.getName().toLowerCase() + "_front.png"));
         } else {
-            imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/pikachu_front.png")); // Imagen genérica para Pokémon no capturados
+            imageLabel = new JLabel(new ImageIcon(new ImageIcon("src/main/resources/static/black/unknow.png")
+                    .getImage().getScaledInstance(100,100,Image.SCALE_SMOOTH))); // Imagen genérica para Pokémon no capturados
         }
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Nombre del Pokémon
-        JLabel nameLabel = new JLabel(isCaptured ? pokemon.getName() : "???");
+        JLabel nameLabel = new JLabel(pokemon.getIs_Default() ? pokemon.getName() : "???");
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Botón "Más información" (solo para Pokémon capturados)
         JButton infoButton = new JButton("Más información");
-        infoButton.setEnabled(isCaptured); // Habilitar o deshabilitar según el estado de captura
+        infoButton.setEnabled(pokemon.getIs_Default()); // Habilitar o deshabilitar según el estado de captura
         infoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         infoButton.addActionListener(e -> {
-            if (isCaptured) {
+            if (pokemon.getIs_Default()) {
                 new PokemonDetailsUI(pokemon); // Abre la ventana con más detalles
             }
         });
