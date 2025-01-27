@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Optional;
 
+
+/// *** JHON LAVERDE *** ///
 public class UserRegistrationUI {
 
     // uso del repositorio
