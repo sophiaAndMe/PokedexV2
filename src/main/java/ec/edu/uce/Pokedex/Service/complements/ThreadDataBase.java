@@ -36,9 +36,9 @@ public class ThreadDataBase {
 
     public void iniciarCargaDePokemons() {
         // Dividir la carga en dos rangos
-        cargarPokemons(1, 10);
-        cargarPokemons(11, 12);
-        cargarPokemons(12, 13);
+        cargarPokemons(1, 333);
+        cargarPokemons(334, 666);
+        cargarPokemons(667, 1000);
     }
 
     public void shutdownExecutor() {
