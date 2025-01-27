@@ -1,23 +1,33 @@
 
 package ec.edu.uce.Pokedex.Vista;
+import ec.edu.uce.Pokedex.Controlador.PokemonCaptureNotifier;
+import ec.edu.uce.Pokedex.Controlador.PokemonCaptureObserver;
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
+import ec.edu.uce.Pokedex.Modelo.PokemonUsuario;
 import ec.edu.uce.Pokedex.Modelo.Usuario;
 import ec.edu.uce.Pokedex.Service.PokemonRepository;
+import ec.edu.uce.Pokedex.Service.PokemonService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class PokedexUI {
     private static PokemonRepository pokemonRepository;
+    private static PokemonService pokemonService;
+    private Usuario usuario; // Almacena el usuario actual
 
     public PokedexUI(Usuario usuario) {
+        this.usuario = usuario; // Guardar el usuario actual
         ApplicationContext context = new AnnotationConfigApplicationContext("ec.edu.uce.Pokedex");
 
         // Repositorio de Pokémon
         pokemonRepository = context.getBean(PokemonRepository.class);
+        pokemonService = context.getBean(PokemonService.class);
 
         // Ventana principal
         JFrame frame = new JFrame("Pokedex");
@@ -29,6 +39,32 @@ public class PokedexUI {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         frame.add(titleLabel, BorderLayout.NORTH);
 
+        // Panel para la barra de búsqueda y el botón de captura
+        JPanel inputPanel = new JPanel();
+        JTextField filterPokemonByName = new JTextField(20);
+
+        JButton captureButton = new JButton("Capturar");
+
+        // Acción del botón de captura
+        captureButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String pokemonName = filterPokemonByName.getText().trim();
+                if (!pokemonName.isEmpty()) {
+                    // Lógica para capturar el Pokémon por nombre
+                    JOptionPane.showMessageDialog(frame, "nombre de Pokémon." + pokemonName);
+
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Por favor, ingresa un nombre de Pokémon.");
+                }
+            }
+        });
+
+        inputPanel.add(filterPokemonByName);
+        inputPanel.add(captureButton);
+
+        frame.add(inputPanel, BorderLayout.SOUTH);
+
         // Panel para mostrar todos los Pokémon
         JPanel pokemonPanel = new JPanel();
         pokemonPanel.setLayout(new GridLayout(0, 4, 10, 10)); // Grilla de 4 columnas
@@ -39,7 +75,6 @@ public class PokedexUI {
 
         for (Pokemon pokemon : allPokemons) {
             boolean isCaptured = capturedPokemons.contains(pokemon);
-
             JPanel pokemonCard = createPokemonCard(pokemon, isCaptured);
             pokemonPanel.add(pokemonCard);
         }
@@ -50,6 +85,7 @@ public class PokedexUI {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+    //********************************
 
     private JPanel createPokemonCard(Pokemon pokemon, boolean isCaptured) {
         JPanel card = new JPanel();
@@ -58,10 +94,15 @@ public class PokedexUI {
 
         // Imagen del Pokémon
         JLabel imageLabel;
-        if (pokemon.getDefault()) {
+        pokemonService.onPokemonCapture(pokemon, false);
+
+
+
+
+        if (pokemon.getIs_Default()) {
             imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/" + pokemon.getName().toLowerCase() + "_front.png"));
         } else {
-            imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/unknown.png")); // Imagen genérica para Pokémon no capturados
+            imageLabel = new JLabel(new ImageIcon("src/main/resources/static/images/pikachu_front.png")); // Imagen genérica para Pokémon no capturados
         }
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 

@@ -4,5 +4,5 @@ import ec.edu.uce.Pokedex.Modelo.Pokemon;
 
 public interface PokemonCaptureObserver {
 
-    void onPokemonCapture(Pokemon pokemon);
+    void onPokemonCapture(Pokemon pokemon, boolean state);
 }

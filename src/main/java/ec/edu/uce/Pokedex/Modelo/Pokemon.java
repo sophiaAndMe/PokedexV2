@@ -94,12 +94,12 @@ public class Pokemon  {
         this.height = height;
     }
 
-    public Boolean getDefault() {
+    public Boolean getIs_Default() {
         return is_Default;
     }
 
-    public void setDefault(Boolean aDefault) {
-        is_Default = aDefault;
+    public void setIs_Default(Boolean is_Default) {
+        this.is_Default = is_Default;
     }
 
     public Integer getOrder() {
@@ -118,13 +118,7 @@ public class Pokemon  {
         this.weight = weight;
     }
 
-    public Boolean getIs_Default() {
-        return is_Default;
-    }
 
-    public void setIs_Default(Boolean is_Default) {
-        this.is_Default = is_Default;
-    }
 
     public List<PokemonLocation> getLocation_area_encounters() {
         return location_area_encounters;

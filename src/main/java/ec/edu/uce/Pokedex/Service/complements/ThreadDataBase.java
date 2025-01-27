@@ -42,7 +42,7 @@ public class ThreadDataBase {
             try {
 
                 Thread.sleep(5000);
-                for(int i=301;i<=601 ;i++){
+                for(int i=26;i<=30 ;i++){
                     pokemonService.fetchAndSavePokemon(i);
                 }
                 System.out.println("tarea 2 completada!");

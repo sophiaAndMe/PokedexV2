@@ -4,6 +4,8 @@ import ec.edu.uce.Pokedex.Modelo.*;
 import ec.edu.uce.Pokedex.Service.complements.ManagerDuplicate;
 import ec.edu.uce.Pokedex.Service.complements.SaveImagen;
 import org.hibernate.Hibernate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +25,7 @@ public class PokemonService {
 
 
     /// es final para mantener la integridad de los POKEMOS
-    private final PokemonRepository pokemonRepository;
+    private PokemonRepository pokemonRepository;
     private final pokemonAbilityRepository pokemonAbilityRepository;
     private final pokemonAreaRepository pokemonAreaRepository;
     private  Pokemon pokemon;
@@ -74,7 +76,7 @@ public class PokemonService {
         managerDuplicate.manejoPokemonName(pokemonRepository,(String)response.get("name"));
         pokemon.setHeight((int) response.get("height"));
         pokemon.setWeight((int) response.get("weight"));
-        pokemon.setIs_Default((boolean) response.get("is_default"));
+        pokemon.setIs_Default(false);
         /// creo que me va a causar problemas con la palabra order
         pokemon.setOrder((int) response.get("order"));
         pokemon.setBaseExperience((int) response.get("base_experience"));
@@ -162,6 +164,14 @@ public class PokemonService {
             pokemon = pokemonRepository.findById(id);
         Hibernate.initialize(pokemon.getLocation_area_encounters());
         return pokemon.getLocation_area_encounters();
+    }
+
+
+    public void onPokemonCapture(Pokemon pokemon, Boolean state) {
+        // Repositorio de Pokémon
+        pokemon.setIs_Default(state);
+        pokemonRepository.updatePokemonIsDefault(pokemon.getId(),pokemon.getIs_Default());
+
     }
 
 
