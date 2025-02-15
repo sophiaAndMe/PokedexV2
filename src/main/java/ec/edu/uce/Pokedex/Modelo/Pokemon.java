@@ -25,6 +25,16 @@ public class Pokemon  {
     @Column(name = "order_pokemon")
     private Integer order ;
     private Integer weight;
+
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @JoinTable(
+            name = "pokemon_type_seq",
+            joinColumns = @JoinColumn(name = "pokemon_id"),
+            inverseJoinColumns = @JoinColumn(name = "type_id")
+    )
+    private List<PokemonType> types = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "pokemon_ability_seq", // Nombre único para la tabla intermedia
@@ -32,6 +42,7 @@ public class Pokemon  {
             inverseJoinColumns = @JoinColumn(name = "ability_id") // Columna que referencia a Ability
     )
     private List<PokemonAbility> abilities = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "pokemon_location_seq",
@@ -40,23 +51,18 @@ public class Pokemon  {
     )
     private List<PokemonLocation> location_area_encounters = new ArrayList<>();
 
+
     @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PokemonImagen> sprites = new ArrayList<>();
 
-    // tabla intermedia
-    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PokemonUsuario> pokemonUsuarios = new ArrayList<>();
-
-
-    // getter and setters
-
-    public List<PokemonUsuario> getPokemonUsuarios() {
-        return pokemonUsuarios;
+    public List<PokemonType> getTypes() {
+        return types;
     }
 
-    public void setPokemonUsuarios(List<PokemonUsuario> pokemonUsuarios) {
-        this.pokemonUsuarios = pokemonUsuarios;
+    public void setTypes(List<PokemonType> types) {
+        this.types = types;
     }
+
     public Long getId() {
         return id;
     }

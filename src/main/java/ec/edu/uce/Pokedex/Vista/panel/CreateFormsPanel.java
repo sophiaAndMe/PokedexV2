@@ -1,4 +1,4 @@
-package ec.edu.uce.Pokedex.Controlador.panel;
+package ec.edu.uce.Pokedex.Vista.panel;
 
 import ec.edu.uce.Pokedex.Modelo.Pokemon;
 
