@@ -12,9 +12,8 @@ import java.util.List;
 public class Pokemon  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pokemon_id") // Nombre explícito de la columna
-    private Long id;
+    private int id;
 
     @Column(nullable = false, unique = true) // Nombre explícito de la columna
     private String name;
@@ -63,11 +62,11 @@ public class Pokemon  {
         this.types = types;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

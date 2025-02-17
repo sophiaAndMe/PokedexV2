@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${pokemon.name} + ' - Detalles'"></title>
+    <style>
+        /* Variables de color consistentes */
+        :root {
+            --primary: #2F4858;
+            --secondary: #33658A;
+            --accent: #86BBD8;
+            --background: #F6F7F9;
+            --text: #2D2D2D;
+            --fire: #FF6B6B;
+            --water: #6BB9FF;
+            --grass: #7BCF7B;
+            --electric: #FFD700;
+        }
+
+        /* Estilo base unificado */
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            margin: 0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Contenedor principal */
+        .detail-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Encabezado */
+        .pokemon-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .pokemon-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Imagen */
+        .pokemon-image {
+            width: 280px;
+            height: 280px;
+            object-fit: contain;
+            margin: 0 auto 2rem;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Sección de detalles */
+        .details-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .detail-card {
+            background: var(--background);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Tipos de Pokémon */
+        .type-badge {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.3rem;
+            font-weight: 500;
+            text-transform: capitalize;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .type-fire { background: var(--fire); color: white; }
+        .type-water { background: var(--water); color: white; }
+        .type-grass { background: var(--grass); color: white; }
+        .type-electric { background: var(--electric); color: var(--text); }
+
+        /* Botón de regreso */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--secondary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        .back-button:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(51, 101, 138, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .detail-container {
+                padding: 1.5rem;
+            }
+
+            .pokemon-image {
+                width: 200px;
+                height: 200px;
+            }
+
+            .details-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+<body>
+<div class="detail-container">
+    <div class="pokemon-header">
+        <h1 th:text="${pokemon.name}"></h1>
+        <p>ID: <span th:text="${pokemon.id}"></span></p>
+    </div>
+
+    <img th:src="@{'/images/' + ${pokemon.name} + '_front.png'}"
+         class="pokemon-image"
+         th:alt="${pokemon.name}"/>
+    <img th:src="@{'/images/' + ${pokemon.name} + '_back.png'}"
+         class="pokemon-image"
+         th:alt="${pokemon.name}"/>
+
+
+    <h6>Tipo:</h6>
+    <p>
+        <span th:each="type : ${pokemon.types}"
+              class="type-badge type-${type.name.toLowerCase()}"
+              th:text="${type.name}">
+        </span>
+    <div class="details-section">
+        <div class="detail-card">
+            <h3>Habilidades</h3>
+            <ul>
+                <!-- Asume que Pokemon tiene una propiedad 'abilities' (lista) -->
+                <li th:each="ability : ${pokemon.abilities}" th:text="${ability.name}"></li>
+            </ul>
+        </div>
+
+        <div class="detail-card">
+            <h3>Ubicación</h3>
+            <!-- Asume que Pokemon tiene una propiedad 'location' -->
+            <p th:each="location_area_encounter : ${pokemon.location_area_encounters}" th:text="${location_area_encounter.name} ?: 'No disponible'"></p>
+        </div>
+    </div>
+
+    <a href="#" onclick="history.back()" class="back-button">Volver a la Galería</a>
+</div>
+</body>
+</html>

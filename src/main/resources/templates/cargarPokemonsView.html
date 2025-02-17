@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Galería de Pokémon</title>
+  <style>
+    :root {
+      --primary: #2F4858;
+      --secondary: #33658A;
+      --accent: #86BBD8;
+      --background: #F6F7F9;
+      --text: #2D2D2D;
+    }
+    /* Contenedor del buscador */
+    .search-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      background: white;
+      padding: 0.5rem;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    #searchButton {
+      padding: 0.8rem 1.8rem;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    #searchButton:hover {
+      background: var(--primary);
+      transform: translateY(-1px);
+    }
+    .clean-button {
+      padding: 0.8rem 1.8rem;
+      background: var(--fire);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .clean-button:hover {
+      background: #ff5252;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .search-form {
+        flex-direction: column;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      #searchInput {
+        width: 100%;
+        background: white;
+        border: 2px solid var(--accent);
+      }
+
+      .buttons-container {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 2.5rem;
+      color: var(--primary);
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .search-container {
+      max-width: 600px;
+      margin: 2rem auto 3rem;
+      display: flex;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    #searchInput {
+      flex: 1;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid var(--accent);
+      border-radius: 30px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    #searchInput:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(134, 187, 216, 0.3);
+    }
+
+    #searchButton {
+      padding: 0.8rem 2rem;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #searchButton:hover {
+      background: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 0;
+    }
+
+    .pokemon-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .pokemon-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .pokemon-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin: 0 auto 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .pokemon-card h3 {
+      color: var(--primary);
+      margin: 0.5rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .pokemon-card p {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0.3rem 0;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin: 0.2rem;
+      background: var(--accent);
+      color: white;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 3rem 0 2rem;
+    }
+
+    .pagination a, .pagination span {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .pagination a {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .pagination a:hover {
+      background: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .pagination span {
+      background: #E0E0E0;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    .clean-button {
+      background: #FF6B6B !important;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .search-container {
+        flex-direction: column;
+      }
+
+      #searchButton {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<h1 style="text-align: center; color: #2c3e50;">Galería de Pokémon</h1>
+<!-- Buscador modificado con formulario -->
+<div class="search-container">
+  <form th:action="@{/galeria}" method="get" class="search-form">
+    <input type="text" id="searchInput" name="search"
+           th:value="${param.search != null} ? ${param.search[0]}"
+           placeholder="Buscar Pokémon por nombre...">
+
+    <div class="buttons-container">
+      <button type="submit" id="searchButton">
+        🔍 Buscar
+      </button>
+      <a th:if="${param.search}" href="/galeria" class="clean-button">
+        ✖ Limpiar
+      </a>
+    </div>
+  </form>
+</div>
+
+<div class="gallery" id="gallery">
+
+  <!-- Iterar sobre la lista de Pokémon -->
+  <div th:each="pokemon : ${pokemons}" class="pokemon-card">
+    <h3 th:text="${pokemon.name}" style="color: #e74c3c;"></h3>
+    <p>ID: <span th:text="${pokemon.id}"></span></p>
+    <!-- Usar el nombre del Pokémon para construir la ruta de la imagen -->
+    <img th:src="@{'/images/' + ${pokemon.name} + '_front.png'}"
+         th:alt="${pokemon.name}" style="width: 120px; height: 120px;"/>
+    <p>Tipo:
+      <span th:each="type : ${pokemon.types}" th:text="${type.name} + ' '"></span>
+    </p>
+    <!-- Enlace a la página de detalle del Pokémon -->
+    <p>
+      <a th:href="@{'/pokemon/' + ${pokemon.id}}"
+         style="text-decoration: none; color: blue;">Más información</a>
+    </p>
+  </div>
+</div>
+
+<div class="pagination">
+  <!-- Botón Siguiente (solo visible cuando NO hay búsqueda) -->
+  <a th:if="${!#ctx.containsVariable('param.search')}"
+     th:href="@{'/galeria?page=' + ${nextPage}}"
+     style="text-decoration: none; cursor: pointer;">
+    Siguiente
+  </a>
+
+  <!-- Versión desactivada cuando hay búsqueda -->
+  <span th:if="${#ctx.containsVariable('param.search')}"
+        style="padding: 12px 24px; background: #cccccc; color: #666666; border-radius: 5px;">
+    Siguiente
+  </span>
+</div>
+
+
+
+</body>
+</html>
